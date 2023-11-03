@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Rova_2023</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HttpClientFactory" Version="1.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.21" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.7.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.21">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="RestSharp" Version="110.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.2.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include="Twilio" Version="6.14.1" />
+    <PackageReference Include="Twilio.AspNet.Common" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+</Project>
