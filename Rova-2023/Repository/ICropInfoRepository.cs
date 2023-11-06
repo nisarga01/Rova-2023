@@ -8,5 +8,6 @@ namespace Rova_2023.Repository
     {
         Task<ServiceResponse<CropInfo>> AddCropInfoAsync(CropInfo cropInfo);
         Task<ServiceResponse<List<CropInfo>>> GetAllCropsAsync(string modelname);
+
     }
 }

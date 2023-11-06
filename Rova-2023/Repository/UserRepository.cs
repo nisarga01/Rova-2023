@@ -18,33 +18,35 @@ namespace Rova_2023.Repository
             this.rovaDBContext = rovaDBContext;
             this.memoryCache = memoryCache;
         }
-        public async Task<UserResponseDTO> CheckUserDetailsinDatabasAsync(string name, string phone)
+        /*public async Task<ServiceResponse<string>> CheckUserDetailsinDatabasAsync(string name, string phone)
         {
-
-            var user = await rovaDBContext.Users
-                .Where(u => u.Name == name && u.Phone == phone)
-                .FirstOrDefaultAsync();
-
-
-            if (user != null)
+            
+            if (rovaDBContext.Users.Any(u => u.Name == name && u.Phone == phone))
             {
-                var userDTO = new UserResponseDTO
+                return new ServiceResponse<string>()
                 {
-                    Name = user.Name,
-                    Phone = user.Phone
+                    success = true,
 
                 };
-                return userDTO;
-            }
 
-            return null;
-        }
-        public bool Exist(string Name, string Phone)
+            }
+            else
+            {
+                return new ServiceResponse<string>()
+                {
+                    success = false,
+
+                };
+            }
+            
+        }*/
+        public async Task<bool> CheckUserDetailsinDatabasAsync(string name, string phone)
         {
-            var isExist = rovaDBContext.Users.Any(f => f.Name == Name && f.Phone == Phone);
+            var isExist = await rovaDBContext.Users.AnyAsync(u => u.Name == name && u.Phone == phone);
             return isExist;
         }
-        
+
+
         public async Task<ServiceResponse<Users>> AddUsertoDatabaseAsync(Users user)
         {
             try
@@ -70,6 +72,13 @@ namespace Rova_2023.Repository
                 };
             }
         }
+
+
+
+
+
+
+
         /*public async Task<ServiceResponse<Users>> GetPhoneFromDatabaseAsync(UserLoginDTO userLoginDTO )
         {
             try

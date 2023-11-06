@@ -11,8 +11,8 @@ using Rova_2023.Data;
 namespace Rova_2023.Migrations
 {
     [DbContext(typeof(RovaDBContext))]
-    [Migration("20231011080512_init")]
-    partial class init
+    [Migration("20231106052014_init3")]
+    partial class init3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

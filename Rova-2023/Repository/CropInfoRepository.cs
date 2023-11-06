@@ -82,6 +82,7 @@ namespace Rova_2023.Repository
                 };
 
             }
+
             catch (Exception ex)
             {
                 return new ServiceResponse<List<CropInfo>>()

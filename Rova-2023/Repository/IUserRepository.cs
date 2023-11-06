@@ -8,8 +8,9 @@ namespace Rova_2023.Repository
 {
     public interface IUserRepository
     {
-        Task<UserResponseDTO> CheckUserDetailsinDatabasAsync(string name, string phone);
+        Task<bool> CheckUserDetailsinDatabasAsync(string name, string phone);
         Task<ServiceResponse<Users>> AddUsertoDatabaseAsync(Users user);
+
         //Task<ServiceResponse<Users>> GetPhoneFromDatabaseAsync(UserLoginDTO userLoginDTO);
 
     }
