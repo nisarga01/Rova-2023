@@ -14,19 +14,19 @@ namespace Rova_2023.Controllers
     {
         public readonly IUserServices userServices;
         public readonly IHttpContextAccessor httpContextAccessor;
-        
-        
-        public UserController(IUserServices userServices,IHttpContextAccessor httpContextAccessor )
+
+
+        public UserController(IUserServices userServices, IHttpContextAccessor httpContextAccessor)
         {
-            this.userServices = userServices; 
+            this.userServices = userServices;
             this.httpContextAccessor = httpContextAccessor;
-            
+
         }
-       
-        [HttpPost("SignIn")]
-        public async Task<IActionResult> SignIn([FromBody] UserRequestDTO userRequestDTO )
-         {
- 
+
+        [HttpPost("SignUp")]
+        public async Task<IActionResult> SignUp([FromBody] UserRequestDTO userRequestDTO)
+        {
+
             var result = await userServices.AddUserDetailstoSessionAsync(userRequestDTO);
 
             if (result.success)
@@ -37,8 +37,8 @@ namespace Rova_2023.Controllers
         [HttpPost("VerifyOTP")]
         public async Task<IActionResult> VerifyOTP(string enteredOTP)
         {
-            var session = HttpContext.Session;
-            var result = await userServices.VerifyOtpAsync(enteredOTP,session);
+            //var session = HttpContext.Session;
+            var result = await userServices.VerifyOtpAsync(enteredOTP);
 
             if (result.success)
                 return Ok(result);
@@ -61,16 +61,17 @@ namespace Rova_2023.Controllers
                 return Ok(result);
             return BadRequest(result);
         }*/
-        /*[HttpPost("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginDTO userlogindto)
         {
-            var result = await userServices.LoginAsync(userlogindto, HttpContext.Session);
+            var result = await userServices.LoginAsync(userlogindto);
 
             if (result.success)
 
                 return Ok(result);
             return BadRequest(result);
-        }*/
+        }
+
         /*[HttpPost("VerifyloginOTP")]
         public async Task<IActionResult> VerifyloginOTP(UserLoginDTO userloginDTO, string enteredotp)
         {

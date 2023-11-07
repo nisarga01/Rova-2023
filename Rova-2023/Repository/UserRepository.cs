@@ -18,29 +18,8 @@ namespace Rova_2023.Repository
             this.rovaDBContext = rovaDBContext;
             this.memoryCache = memoryCache;
         }
-        /*public async Task<ServiceResponse<string>> CheckUserDetailsinDatabasAsync(string name, string phone)
-        {
-            
-            if (rovaDBContext.Users.Any(u => u.Name == name && u.Phone == phone))
-            {
-                return new ServiceResponse<string>()
-                {
-                    success = true,
 
-                };
-
-            }
-            else
-            {
-                return new ServiceResponse<string>()
-                {
-                    success = false,
-
-                };
-            }
-            
-        }*/
-        public async Task<bool> CheckUserDetailsinDatabasAsync(string name, string phone)
+        public async Task<bool> CheckUserDetailsinDatabaseAsync(string name, string phone)
         {
             var isExist = await rovaDBContext.Users.AnyAsync(u => u.Name == name && u.Phone == phone);
             return isExist;
@@ -125,8 +104,15 @@ namespace Rova_2023.Repository
                 };
             }
         }*/
+        public async Task<bool> GetPhoneFromDatabaseAsync(UserLoginDTO userLoginDTO)
+        {
+            var user = await rovaDBContext.Users
+                .Where(u => u.Name == userLoginDTO.Phone)
+                .FirstOrDefaultAsync();
+            return user != null;
 
 
+        }
     }
 
 
