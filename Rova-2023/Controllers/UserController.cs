@@ -37,7 +37,7 @@ namespace Rova_2023.Controllers
         [HttpPost("VerifyOTP")]
         public async Task<IActionResult> VerifyOTP(string enteredOTP)
         {
-            //var session = HttpContext.Session;
+            
             var result = await userServices.VerifyOtpAsync(enteredOTP);
 
             if (result.success)
