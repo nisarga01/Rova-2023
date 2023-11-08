@@ -72,9 +72,9 @@ namespace Rova_2023.Controllers
         }
 
         /*[HttpPost("VerifyloginOTP")]
-        public async Task<IActionResult> VerifyloginOTP(UserLoginDTO userloginDTO, string enteredotp)
+        public async Task<IActionResult> VerifyloginOTP(string enteredotp)
         {
-            var result = await userServices.VerifyloginOTPAsync(userloginDTO, enteredotp, HttpContext.Session);
+            var result = await userServices.VerifyloginOTPAsync(enteredotp);
 
             if (result.success)
                 return Ok(result);
