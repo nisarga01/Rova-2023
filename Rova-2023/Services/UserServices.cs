@@ -198,8 +198,8 @@ namespace Rova_2023.Services
             try
             {
 
-                var phoneNumber = await userRepository.GetPhoneFromDatabaseAsync(PhoneNumber);
-                if (!phoneNumber)
+                var existing = await userRepository.GetPhoneFromDatabaseAsync(PhoneNumber);
+                if (!existing)
                 {
                     var errorResponse = new ServiceResponse<bool>
                     {
@@ -222,7 +222,7 @@ namespace Rova_2023.Services
                     language = "english",
                     route = "otp",
                     variables_values = otp,
-                    numbers = phoneNumber,
+                    numbers = PhoneNumber,
                     flash = "0",
                 };
 
@@ -242,7 +242,7 @@ namespace Rova_2023.Services
                 }
                 else
                 {
-                    var responseContent = await response.Content.ReadAsStringAsync();
+                    
                     return new ServiceResponse<bool>
                     {
                         success = false,
