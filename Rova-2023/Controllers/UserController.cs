@@ -26,7 +26,7 @@ namespace Rova_2023.Controllers
         [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp([FromBody] UserRequestDTO userRequestDTO)
         {
-            //var session = HttpContext.Session;
+            
             var result = await userServices.AddUserDetailstoSessionAsync(userRequestDTO);
 
             if (result.success)
