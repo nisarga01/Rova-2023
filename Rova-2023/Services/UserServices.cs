@@ -222,7 +222,7 @@ namespace Rova_2023.Services
                     language = "english",
                     route = "otp",
                     variables_values = otp,
-                    numbers = PhoneNumber,
+                    numbers = PhoneNumber
                     flash = "0",
                 };
 
