@@ -36,7 +36,7 @@ namespace Rova_2023.Controllers
         [HttpPost("VerifyOTP")]
         public async Task<IActionResult> VerifyOTP(string enteredOTP)
         {
-            //var session = HttpContext.Session;
+            
             var result = await userServices.VerifyOtpAsync(enteredOTP);
 
             if (result.success)
@@ -61,25 +61,24 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
         }*/
         [HttpPost("login")]
-        public async Task<IActionResult> Login( string PhoneNumber)
+        public async Task<IActionResult> Login(string PhoneNumber)
         {
             var result = await userServices.LoginAsync(PhoneNumber);
 
             if (result.success)
-
                 return Ok(result);
             return BadRequest(result);
         }
 
-        /*[HttpPost("VerifyloginOTP")]
-        public async Task<IActionResult> VerifyloginOTP(string enteredotp)
-        {
-            var result = await userServices.VerifyloginOTPAsync(enteredotp);
+        //[HttpPost("VerifyloginOTP")]
+        //public async Task<IActionResult> VerifyloginOTP(string enteredotp)
+        //{
+        //    var result = await userServices.VerifyloginOTPAsync(enteredotp);
 
-            if (result.success)
-                return Ok(result);
-            return BadRequest(result);
-        }*/
+        //    if (result.success)
+        //        return Ok(result);
+        //    return BadRequest(result);
+        //}
 
 
 

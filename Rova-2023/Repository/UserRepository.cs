@@ -5,6 +5,8 @@ using Rova_2023.DTO.RegisterationDTO;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
 using Rova_2023.DTO.User_DTO;
+using System.Numerics;
+using System.Xml.Linq;
 
 namespace Rova_2023.Repository
 {
@@ -50,22 +52,11 @@ namespace Rova_2023.Repository
                 };
             }
         }
-        public async Task<bool> GetPhoneFromDatabaseAsync(string PhoneNumber)
+        public async Task<bool> GetByPhoneNumberAsync(string PhoneNumber)
         {
-            var user = await rovaDBContext.Users
-                .Where(u => u.Phone == PhoneNumber)
-                .FirstOrDefaultAsync();
-            return user != null;
-
-
+            var isExisting = await rovaDBContext.Users.AnyAsync(u=> u.Phone == PhoneNumber );
+            return isExisting;
         }
-
-
-
-
-
-
-        
     }
 
 

@@ -197,18 +197,16 @@ namespace Rova_2023.Services
         {
             try
             {
-
-                var existing = await userRepository.GetPhoneFromDatabaseAsync(PhoneNumber);
+                var existing = await userRepository.GetByPhoneNumberAsync(PhoneNumber);
                 if (!existing)
                 {
                     var errorResponse = new ServiceResponse<bool>
                     {
                         success = false,
-                        ResultMessage = "User not exists in the database, please Signup before login !"
+                        ResultMessage = "User not found, please Signup!",
+                        Errormessage = "User not found!"
                     };
                     return errorResponse;
-
-
                 }
                 var httpContext = httpContextAccessor.HttpContext;
 
@@ -242,12 +240,12 @@ namespace Rova_2023.Services
                 }
                 else
                 {
-                    
                     return new ServiceResponse<bool>
                     {
                         success = false,
                         Errormessage = "Failed to send OTP",
-                        data = false 
+                        ResultMessage = "Error occurred while sending OTP. Please try again",
+                        data = false
                     };
                 }
             }
@@ -257,7 +255,8 @@ namespace Rova_2023.Services
                 {
                     success = false,
                     ResultMessage = "Failed to send OTP",
-                    Errormessage = ex.Message
+                    Errormessage = ex.Message,
+                    data = false
                 };
             }
         }
@@ -294,52 +293,54 @@ namespace Rova_2023.Services
         //    }
 
 
-        /*public async Task<ServiceResponse<string>> LoginAsync(UserLoginDTO userlogindto)
-        {
-
-            var result = await userRepository.AuthenticateUser(userlogindto);
-            if (result.success)
+            /*public async Task<ServiceResponse<string>> LoginAsync(UserLoginDTO userlogindto)
             {
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier,result.data.Phone),
-                };
-                var token = new JwtSecurityToken
-                   (
-                   issuer: configuration["Jwt:Issuer"],
-                   audience: configuration["Jwt:Audience"],
-                   claims: claims,
-                   expires: DateTime.UtcNow.AddHours(72),
-                   signingCredentials: creds
-                   );
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenString = tokenHandler.WriteToken(token);
 
+                var result = await userRepository.AuthenticateUser(userlogindto);
+                if (result.success)
+                {
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                    var claims = new[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier,result.data.Phone),
+                    };
+                    var token = new JwtSecurityToken
+                       (
+                       issuer: configuration["Jwt:Issuer"],
+                       audience: configuration["Jwt:Audience"],
+                       claims: claims,
+                       expires: DateTime.UtcNow.AddHours(72),
+                       signingCredentials: creds
+                       );
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var tokenString = tokenHandler.WriteToken(token);
+
+                    return new ServiceResponse<string>
+                    {
+                        success = true,
+                        data = tokenString,
+                        ResultMessage = "Token will be valid upto 72 hours"
+                    };
+                }
                 return new ServiceResponse<string>
                 {
-                    success = true,
-                    data = tokenString,
-                    ResultMessage = "Token will be valid upto 72 hours"
+                    success = false,
+                    data = null,
+                    ResultMessage = result.ResultMessage,
+                    Errormessage = result.Errormessage
                 };
-            }
-            return new ServiceResponse<string>
-            {
-                success = false,
-                data = null,
-                ResultMessage = result.ResultMessage,
-                Errormessage = result.Errormessage
-            };
-        }*/
+            }*/
 
 
+        
     }
-
-
-
-
 }
+
+
+
+
+
 
 
 
