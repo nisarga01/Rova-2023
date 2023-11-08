@@ -104,10 +104,10 @@ namespace Rova_2023.Repository
                 };
             }
         }*/
-        public async Task<bool> GetPhoneFromDatabaseAsync(UserLoginDTO userLoginDTO)
+        public async Task<bool> GetPhoneFromDatabaseAsync(string PhoneNumber)
         {
             var user = await rovaDBContext.Users
-                .Where(u => u.Name == userLoginDTO.Phone)
+                .Where(u => u.Phone  == PhoneNumber)
                 .FirstOrDefaultAsync();
             return user != null;
 

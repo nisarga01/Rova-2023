@@ -62,9 +62,9 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
         }*/
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginDTO userlogindto)
+        public async Task<IActionResult> Login( string PhoneNumber)
         {
-            var result = await userServices.LoginAsync(userlogindto);
+            var result = await userServices.LoginAsync(PhoneNumber);
 
             if (result.success)
 
