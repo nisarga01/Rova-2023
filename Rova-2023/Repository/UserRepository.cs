@@ -1,7 +1,6 @@
 ﻿using Rova_2023.Data;
 using Rova_2023.Models;
 using Rova_2023.Utilities;
-using Rova_2023.DTO.LoginDTO;
 using Rova_2023.DTO.RegisterationDTO;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
@@ -51,68 +50,22 @@ namespace Rova_2023.Repository
                 };
             }
         }
-
-
-
-
-
-
-
-        /*public async Task<ServiceResponse<Users>> GetPhoneFromDatabaseAsync(UserLoginDTO userLoginDTO )
-        {
-            try
-            {
-                Users user = null;
-                var isExist = rovaDBContext.Users.Any(f => f.Phone == userLoginDTO .Phone);
-                if (!isExist)
-                {
-                    return new ServiceResponse<Users>
-                    {
-                        success = false,
-                        ResultMessage = "Please signup before login",
-                        Errormessage = "phone number does not exist "
-                    };
-
-                }
-                user = rovaDBContext.Users.FirstOrDefault(f => f.Phone == userLoginDTO .Phone);
-                if (user != null)
-                {
-                    return new ServiceResponse<Users>
-                    {
-                        success = true,
-                        data = user,
-                        ResultMessage = "Phone number is valid"
-                    };
-
-                }
-                return new ServiceResponse<Users>
-                {
-                    success = true,
-                    ResultMessage = "Please enter correct Phone number",
-                    Errormessage = "Enter correct Phone number "
-                };
-
-
-            }
-            catch (Exception ex)
-            {
-                return new ServiceResponse<Users>
-                {
-                    success = false,
-                    ResultMessage = ex.Message,
-                    Errormessage = "Error occured please try again "
-                };
-            }
-        }*/
         public async Task<bool> GetPhoneFromDatabaseAsync(string PhoneNumber)
         {
             var user = await rovaDBContext.Users
-                .Where(u => u.Phone  == PhoneNumber)
+                .Where(u => u.Phone == PhoneNumber)
                 .FirstOrDefaultAsync();
             return user != null;
 
 
         }
+
+
+
+
+
+
+        
     }
 
 
