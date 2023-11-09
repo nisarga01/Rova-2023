@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Rova_2023.DTO.User_DTO;
 using System.Numerics;
 using System.Xml.Linq;
+using Rova_2023.DTO.LoginResponseDTO;
+using Twilio.Types;
 
 namespace Rova_2023.Repository
 {
@@ -56,6 +58,18 @@ namespace Rova_2023.Repository
         {
             var isExisting = await rovaDBContext.Users.AnyAsync(u=> u.Phone == PhoneNumber );
             return isExisting;
+        }
+
+        public async Task<ServiceResponse<bool>> CheckUserDetailsAsync(LoginResponseDTO loginResponseDTO)
+        {
+            var isExisting = await rovaDBContext.Users.AnyAsync(u => u.Id == loginResponseDTO.Id && u.Phone == loginResponseDTO.Phone );
+            return new ServiceResponse<bool>()
+            {
+                data = isExisting,
+            };
+                
+
+            
         }
     }
 

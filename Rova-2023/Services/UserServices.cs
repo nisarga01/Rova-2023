@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Rova_2023.Data;
+using Rova_2023.DTO.LoginResponseDTO;
 using Rova_2023.DTO.RegisterationDTO;
 using Rova_2023.DTO.User_DTO;
 using Rova_2023.Models;
@@ -261,81 +262,64 @@ namespace Rova_2023.Services
             }
         }
 
-        //public async Task<ServiceResponse<string>> VerifyLoginOtpAsync(string enteredotp, ISession session)
-        //{
-        //    string storedOTP = session.GetString("UserOTP");
+        public async Task<ServiceResponse<string>> VerifyLoginOtpAsync(string enteredotp)
+        {
+            var httpContext = httpContextAccessor.HttpContext;
+            string storedOTP = httpContext.Session.GetString("UserOTP");
 
-        //    if (string.IsNullOrEmpty(storedOTP))
-        //    {
-        //        return new ServiceResponse<string>
-        //        {
-        //            success = false,
-        //            Errormessage = "OTP not found ",
-        //            ResultMessage = "Please send OTP first."
-        //        };
-        //    }
-        //    if (storedOTP == enteredotp)
-        //    {
-        //        return new ServiceResponse<string>
-        //        {
-        //            success = true,
-        //            ResultMessage = "OTP is verified."
-        //        };
-        //    }
-        //    else
-        //    {
-        //        return new ServiceResponse<string>
-        //        {
-        //            success = false,
-        //            Errormessage = "Failed to add user to the database",
-        //            ResultMessage = "Please try again later."
-        //        };
-        //    }
-
-
-            /*public async Task<ServiceResponse<string>> LoginAsync(UserLoginDTO userlogindto)
+            if (storedOTP == enteredotp)
             {
-
-                var result = await userRepository.AuthenticateUser(userlogindto);
-                if (result.success)
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var claims = new[]
                 {
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
-                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                    var claims = new[]
-                    {
-                        new Claim(ClaimTypes.NameIdentifier,result.data.Phone),
-                    };
-                    var token = new JwtSecurityToken
-                       (
-                       issuer: configuration["Jwt:Issuer"],
-                       audience: configuration["Jwt:Audience"],
-                       claims: claims,
-                       expires: DateTime.UtcNow.AddHours(72),
-                       signingCredentials: creds
-                       );
-                    var tokenHandler = new JwtSecurityTokenHandler();
-                    var tokenString = tokenHandler.WriteToken(token);
+                        new Claim(ClaimTypes.NameIdentifier , storedOTP),
+                };
+                var token = new JwtSecurityToken
+                   (
+                   issuer: configuration["Jwt:Issuer"],
+                   audience: configuration["Jwt:Audience"],
+                   claims: claims,
+                   expires: DateTime.UtcNow.AddHours(72),
+                   signingCredentials: creds
+                   );
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenString = tokenHandler.WriteToken(token);
 
-                    return new ServiceResponse<string>
-                    {
-                        success = true,
-                        data = tokenString,
-                        ResultMessage = "Token will be valid upto 72 hours"
-                    };
-                }
+
+                return new ServiceResponse<string>
+                {
+                    success = true,
+                    ResultMessage = "OTP is verified."
+                };
+            }
+            else
+            {
                 return new ServiceResponse<string>
                 {
                     success = false,
-                    data = null,
-                    ResultMessage = result.ResultMessage,
-                    Errormessage = result.Errormessage
+                    Errormessage = "incorrect OTP",
+                    ResultMessage = "Please try again later."
                 };
-            }*/
+            }
+
+
+
+
+
+
+        }
+       
+    }
+}
+                
+            
 
 
         
-    }
-}
+    
+
+
 
 
 

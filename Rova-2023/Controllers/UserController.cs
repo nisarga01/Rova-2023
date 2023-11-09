@@ -70,15 +70,15 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
         }
 
-        //[HttpPost("VerifyloginOTP")]
-        //public async Task<IActionResult> VerifyloginOTP(string enteredotp)
-        //{
-        //    var result = await userServices.VerifyloginOTPAsync(enteredotp);
+        [HttpPost("VerifyloginOTP")]
+        public async Task<IActionResult> VerifyloginOTP(string enteredotp)
+        {
+            var result = await userServices.VerifyLoginOtpAsync(enteredotp);
 
-        //    if (result.success)
-        //        return Ok(result);
-        //    return BadRequest(result);
-        //}
+            if (result.success)
+                return Ok(result);
+            return BadRequest(result);
+        }
 
 
 
