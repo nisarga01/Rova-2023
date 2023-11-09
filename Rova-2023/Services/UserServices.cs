@@ -15,6 +15,7 @@ using System.Numerics;
 using System.Security.Claims;
 using System.Text;
 using System.Xml.Linq;
+using Twilio.Types;
 
 namespace Rova_2023.Services
 {
@@ -262,10 +263,10 @@ namespace Rova_2023.Services
             }
         }
 
-        public async Task<ServiceResponse<string>> VerifyLoginOtpAsync(string enteredotp)
+        public async Task<ServiceResponse<LoginResponseDTO>> VerifyLoginOtpAsync(string enteredotp)
         {
-            var httpContext = httpContextAccessor.HttpContext;
-            string storedOTP = httpContext.Session.GetString("UserOTP");
+
+            string storedOTP = httpContextAccessor.HttpContext.Session.GetString("UserLoginOTP");
 
             if (storedOTP == enteredotp)
             {
@@ -273,7 +274,7 @@ namespace Rova_2023.Services
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var claims = new[]
                 {
-                        new Claim(ClaimTypes.NameIdentifier , storedOTP),
+                        new Claim(ClaimTypes.NameIdentifier , enteredotp),
                 };
                 var token = new JwtSecurityToken
                    (
@@ -286,65 +287,56 @@ namespace Rova_2023.Services
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var tokenString = tokenHandler.WriteToken(token);
 
-
-                return new ServiceResponse<string>
-                {
-                    data = tokenString,
-                    success = true,
-                    ResultMessage = "OTP is verified"
-                };
-            }
-            else
-            {
-                return new ServiceResponse<string>
-                {
-                    success = false,
-                    Errormessage = "incorrect OTP",
-                    ResultMessage = "Please try again later"
-                };
-            }
-        }
-
-        public async Task<ServiceResponse<LoginResponseDTO>> SendResponse(LoginResponseDTO loginResponseDTO)
-        {
-
-            try
-            {
-                var existingUser = await userRepository.CheckUserDetailsAsync(loginResponseDTO);
-                if (existingUser != null)
-                {
+                string storedPhone = httpContextAccessor.HttpContext.Session.GetString("UserPhone");
+                var user = await userRepository.CheckUserDetailsAsync(storedPhone);
+                if (user != null)
+                    {
+                    var responseDto = new LoginResponseDTO
+                    {
+                        Token = tokenString,
+                        Id = user.Id,
+                        Phone = user.Phone
+                    };
                     return new ServiceResponse<LoginResponseDTO>
                     {
+                        data = responseDto,
                         success = true,
-                        ResultMessage = "Login response sent successfully.",
-                        data = loginResponseDTO
+                        ResultMessage = "OTP is verified"
                     };
                 }
                 else
                 {
                     return new ServiceResponse<LoginResponseDTO>
                     {
+                        data = null,
                         success = false,
-                        ResultMessage = "failed to send response.",
-                        data = null
-                    };
+                        ResultMessage = "incorrect otp",
+                        Errormessage = " Please enter correct otp"
 
+
+
+                    };
                 }
             }
-            catch (Exception ex)
+            return new ServiceResponse<LoginResponseDTO>
             {
-                // Log the exception or handle it as needed
-                return new ServiceResponse<LoginResponseDTO>
-                {
-                    success = false,
-                    Errormessage = "An error occurred while sending the login response",
-                    ResultMessage = ex.Message
-                };
-            }
+                data = null,
+                success = false,
+                Errormessage = "Failed to verify the otp"
+
+            };
         }
     }
-
 }
+            
+
+
+
+
+            
+    
+
+
 
                 
             

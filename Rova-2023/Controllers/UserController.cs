@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Rova_2023.DTO.LoginResponseDTO;
 using Rova_2023.DTO.RegisterationDTO;
 using Rova_2023.DTO.User_DTO;
 using Rova_2023.Services;
@@ -34,7 +35,7 @@ namespace Rova_2023.Controllers
         }
 
         [HttpPost("VerifyOTP")]
-        public async Task<IActionResult> VerifyOTP(string enteredOTP)
+        public async Task<IActionResult> VerifyOTP(string enteredOTP )
         {
             
             var result = await userServices.VerifyOtpAsync(enteredOTP);

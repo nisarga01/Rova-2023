@@ -13,7 +13,7 @@ namespace Rova_2023.Repository
 
         //Task<ServiceResponse<Users>> GetPhoneFromDatabaseAsync(UserLoginDTO userLoginDTO);
         Task<bool> GetByPhoneNumberAsync(string PhoneNumber);
-        Task<ServiceResponse <bool>> CheckUserDetailsAsync(LoginResponseDTO loginResponseDTO);
+        Task<LoginResponseDTO> CheckUserDetailsAsync(string storedPhone);
 
     }
 }

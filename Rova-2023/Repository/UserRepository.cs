@@ -9,6 +9,7 @@ using System.Numerics;
 using System.Xml.Linq;
 using Rova_2023.DTO.LoginResponseDTO;
 using Twilio.Types;
+using Twilio.Jwt.AccessToken;
 
 namespace Rova_2023.Repository
 {
@@ -60,23 +61,40 @@ namespace Rova_2023.Repository
             return isExisting;
         }
 
-        public async Task<ServiceResponse<bool>> CheckUserDetailsAsync(LoginResponseDTO loginResponseDTO)
-        {
-            var isExisting = await rovaDBContext.Users.AnyAsync(u => u.Id == loginResponseDTO.Id && u.Phone == loginResponseDTO.Phone );
-            return new ServiceResponse<bool>()
-            {
-                data = isExisting,
-            };
-                
+        //public async Task<ServiceResponse<bool>> CheckUserDetailsAsync(string storedPhone)
+        //{
+        //    var isExisting = await rovaDBContext.Users.AnyAsync(u => u.Phone == storedPhone  );
+        //    return new ServiceResponse<bool>()
+        //    {
+        //        data = isExisting,
+        //    };
 
-            
+
+
+        //}
+
+        public async Task<LoginResponseDTO> CheckUserDetailsAsync(string storedPhone)
+        {
+            var isExisting = await rovaDBContext .Users
+              .FirstOrDefaultAsync(u => u.Phone == storedPhone );
+           
+
+            if (isExisting  != null)
+            {
+                var userDto = new LoginResponseDTO 
+                {
+                    Id = isExisting.Id,
+                    Phone = isExisting .Phone,
+                    
+                    
+                };
+
+                return userDto;
+            }
+
+            return null; 
         }
     }
-
-
-
-
-
 
 
 
