@@ -289,8 +289,9 @@ namespace Rova_2023.Services
 
                 return new ServiceResponse<string>
                 {
+                    data = tokenString,
                     success = true,
-                    ResultMessage = "OTP is verified."
+                    ResultMessage = "OTP is verified"
                 };
             }
             else
@@ -299,19 +300,52 @@ namespace Rova_2023.Services
                 {
                     success = false,
                     Errormessage = "incorrect OTP",
-                    ResultMessage = "Please try again later."
+                    ResultMessage = "Please try again later"
                 };
             }
-
-
-
-
-
-
         }
-       
+
+        public async Task<ServiceResponse<LoginResponseDTO>> SendResponse(LoginResponseDTO loginResponseDTO)
+        {
+
+            try
+            {
+                var existingUser = await userRepository.CheckUserDetailsAsync(loginResponseDTO);
+                if (existingUser != null)
+                {
+                    return new ServiceResponse<LoginResponseDTO>
+                    {
+                        success = true,
+                        ResultMessage = "Login response sent successfully.",
+                        data = loginResponseDTO
+                    };
+                }
+                else
+                {
+                    return new ServiceResponse<LoginResponseDTO>
+                    {
+                        success = false,
+                        ResultMessage = "failed to send response.",
+                        data = null
+                    };
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                return new ServiceResponse<LoginResponseDTO>
+                {
+                    success = false,
+                    Errormessage = "An error occurred while sending the login response",
+                    ResultMessage = ex.Message
+                };
+            }
+        }
     }
+
 }
+
                 
             
 
