@@ -46,10 +46,6 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
 
         }
-
-
-
-
         /*[HttpPost("SendOTP")]
         public async Task<IActionResult> SendOTP(string phonenumber)
         {

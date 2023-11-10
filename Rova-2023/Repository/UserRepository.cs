@@ -8,7 +8,6 @@ using Rova_2023.DTO.User_DTO;
 using System.Numerics;
 using System.Xml.Linq;
 using Rova_2023.DTO.LoginResponseDTO;
-using Twilio.Types;
 using Twilio.Jwt.AccessToken;
 
 namespace Rova_2023.Repository
@@ -57,51 +56,86 @@ namespace Rova_2023.Repository
         }
         public async Task<bool> GetByPhoneNumberAsync(string PhoneNumber)
         {
-            var isExisting = await rovaDBContext.Users.AnyAsync(u=> u.Phone == PhoneNumber );
+            var isExisting = await rovaDBContext.Users.AnyAsync(u => u.Phone == PhoneNumber);
             return isExisting;
         }
 
-        //public async Task<ServiceResponse<bool>> CheckUserDetailsAsync(string storedPhone)
+        //public async Task<ServiceResponse<LoginResponseDTO>> CheckUserDetailsAsync(string storedPhone,string tokenString)
         //{
-        //    var isExisting = await rovaDBContext.Users.AnyAsync(u => u.Phone == storedPhone  );
-        //    return new ServiceResponse<bool>()
+        //    var isExisting = await rovaDBContext.Users
+        //      .FirstOrDefaultAsync(u => u.Phone == storedPhone);
+        //    if (isExisting != null)
         //    {
-        //        data = isExisting,
+        //        var userDto = new LoginResponseDTO
+        //        {
+        //            Id = isExisting.Id,
+        //            Phone = isExisting.Phone,
+        //            Token = tokenString,
+        //        };
+        //        await rovaDBContext.SaveChangesAsync();
+        //        return new ServiceResponse<LoginResponseDTO>
+        //        {
+        //            data = userDto,
+        //            success = true,
+        //            ResultMessage = "User Details found"
+
+        //        };
+
+
+        //    }
+
+        //    return new ServiceResponse<LoginResponseDTO>
+        //    {
+        //        success = false,
+        //        data = null,
+        //        Errormessage = "User Details not found"
         //    };
-
-
-
         //}
-
-        public async Task<LoginResponseDTO> CheckUserDetailsAsync(string storedPhone)
+        public async Task<ServiceResponse<LoginResponseDTO>> CheckUserDetailsAsync(string storedPhone, string tokenString)
         {
-            var isExisting = await rovaDBContext .Users
-              .FirstOrDefaultAsync(u => u.Phone == storedPhone );
-           
+            var isExisting = await rovaDBContext.Users
+        .FirstOrDefaultAsync(u => u.Phone == storedPhone);
 
-            if (isExisting  != null)
+            if (isExisting != null)
             {
-                var userDto = new LoginResponseDTO 
+                var userDto = new LoginResponseDTO
                 {
                     Id = isExisting.Id,
-                    Phone = isExisting .Phone,
-                    
-                    
+                    Phone = isExisting.Phone,
+                    Name = isExisting.Name,
+                    Token = tokenString
                 };
 
-                return userDto;
+                await rovaDBContext.SaveChangesAsync();
+
+                return new ServiceResponse<LoginResponseDTO>
+                {
+                    data = userDto,
+                    success = true,
+                    ResultMessage = "User Details found"
+                };
             }
 
-            return null; 
+            return new ServiceResponse<LoginResponseDTO>
+            {
+                success = false,
+                data = null,
+                Errormessage = "User Details not found"
+            };
         }
     }
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

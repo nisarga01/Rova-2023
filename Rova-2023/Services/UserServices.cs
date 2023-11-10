@@ -288,35 +288,15 @@ namespace Rova_2023.Services
                 var tokenString = tokenHandler.WriteToken(token);
 
                 string storedPhone = httpContextAccessor.HttpContext.Session.GetString("UserPhone");
-                var user = await userRepository.CheckUserDetailsAsync(storedPhone);
-                if (user != null)
-                    {
-                    var responseDto = new LoginResponseDTO
-                    {
-                        Token = tokenString,
-                        Id = user.Id,
-                        Phone = user.Phone
-                    };
-                    return new ServiceResponse<LoginResponseDTO>
-                    {
-                        data = responseDto,
-                        success = true,
-                        ResultMessage = "OTP is verified"
-                    };
-                }
-                else
+                var user = await userRepository.CheckUserDetailsAsync(storedPhone, tokenString);
+
+                return new ServiceResponse<LoginResponseDTO>
                 {
-                    return new ServiceResponse<LoginResponseDTO>
-                    {
-                        data = null,
-                        success = false,
-                        ResultMessage = "incorrect otp",
-                        Errormessage = " Please enter correct otp"
+                    success = true,
+                    data = user.data,
+                    ResultMessage = "Token is valid upto 72 hours"
 
-
-
-                    };
-                }
+                };
             }
             return new ServiceResponse<LoginResponseDTO>
             {
