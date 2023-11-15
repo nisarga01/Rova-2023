@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Rova_2023.DTO.CropInfo_DTO;
 using Rova_2023.Models;
 using Rova_2023.Services;
@@ -15,7 +17,8 @@ namespace Rova_2023.Controllers
             cropinfoServices = cropInfoServices;
 
         }
-
+        [AllowAnonymous]
+        [EnableCors("CORSPolicy")]
         [HttpPost("AddCropInfo")]
         public async Task<IActionResult> AddCropInfo([FromBody] CropInfoRequestDTO cropInfoRequestDTO)
         {
@@ -24,6 +27,9 @@ namespace Rova_2023.Controllers
                 return Ok(result);
             return BadRequest(result);
         }
+
+        [AllowAnonymous]
+        [EnableCors("CORSPolicy")]
         [HttpGet("GetAllCrops")]
         public async Task<IActionResult> GetAllCrops([FromQuery] string modelname)
         {
