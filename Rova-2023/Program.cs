@@ -47,7 +47,7 @@ namespace Rova_2023
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(5); // Set the session timeout as needed.
+                
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
@@ -63,15 +63,16 @@ namespace Rova_2023
             {
                 options.AddPolicy("CORSPolicy",
                     builder => builder
-                        .WithOrigins("https://localhost:7178/swagger/index.html")
+                        .WithOrigins("https://localhost:7178/swagger/index.html") 
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials()
-                        );
+                        .SetIsOriginAllowed((hosts) => true));
+                        
             });
 
             var app = builder.Build();
-            app.UseCors ();
+            app.UseCors ("CORSPolicy");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
