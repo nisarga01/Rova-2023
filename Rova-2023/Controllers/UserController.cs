@@ -25,7 +25,6 @@ namespace Rova_2023.Controllers
 
         }
         
-        [EnableCors("CORSPolicy")]
         [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp([FromBody] UserRequestDTO UserRequestDTO)
         {
@@ -37,9 +36,6 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
         }
 
-
-        
-        [EnableCors("CORSPolicy")]
         [HttpPost("VerifyOTP")]
         public async Task<IActionResult> VerifyOTP(string enteredOTP )
         {
@@ -64,8 +60,6 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
         }*/
 
-
-        [EnableCors("CORSPolicy")]
         [HttpPost("login")]
         public async Task<IActionResult> Login(string PhoneNumber)
         {
@@ -76,12 +70,10 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
         }
 
-
-        [EnableCors("CORSPolicy")]
         [HttpPost("VerifyloginOTP")]
-        public async Task<IActionResult> VerifyloginOTP(string enteredotp)
+        public async Task<IActionResult> VerifyloginOTP(string EnteredOtp)
         {
-            var result = await userServices.VerifyLoginOtpAsync(enteredotp);
+            var result = await userServices.VerifyLoginOtpAsync(EnteredOtp);
 
             if (result.success)
                 return Ok(result);

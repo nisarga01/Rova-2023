@@ -211,9 +211,9 @@ namespace Rova_2023.Services
                     return ErrorResponse;
                 }
                 var HttpContext = httpContextAccessor.HttpContext;
-                HttpContext.Session.SetInt32("UserId", User.Id);
+                HttpContext.Session.SetString("UserId", User.Id.ToString());
                 HttpContext.Session.SetString("UserName", User.Name);
-                HttpContext.Session.SetString("UserPhone", PhoneNumber);
+                HttpContext.Session.SetString("UserPhone", User.Phone);
 
                 string Otp = GenerateOtp();
                 var HttpClient = httpClientFactory.CreateClient();
@@ -294,7 +294,7 @@ namespace Rova_2023.Services
                     var TokenHandler = new JwtSecurityTokenHandler();
                     var TokenString = TokenHandler.WriteToken(Token);
 
-                    var LoginResponseDTO = new LoginResponseDTO()
+                    var loginResponseDTO = new LoginResponseDTO()
                     {
                         Id = Convert.ToInt32(Id),
                         Name = Name,
@@ -306,7 +306,7 @@ namespace Rova_2023.Services
                     {
                         success = true,
                         ResultMessage = "Token is valid up to 24 hours",
-                        data = LoginResponseDTO
+                        data = loginResponseDTO
                     };
                 }
                 return new ServiceResponse<LoginResponseDTO>
@@ -321,7 +321,7 @@ namespace Rova_2023.Services
                 return new ServiceResponse<LoginResponseDTO>
                 {
                     success = false,
-                    ResultMessage = "Failed to send OTP",
+                    ResultMessage = "Failed to send OTP, Please try again",
                     Errormessage = ex.Message,
 
                 };

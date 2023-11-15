@@ -84,9 +84,6 @@ namespace Rova_2023
             app.UseSession();
 
             app.UseAuthorization();
-            
-
-
             app.MapControllers();
 
             app.Run();
