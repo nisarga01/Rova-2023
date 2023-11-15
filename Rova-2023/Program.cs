@@ -57,17 +57,21 @@ namespace Rova_2023
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 options.EnableSensitiveDataLogging();
             });
+
+
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy",
+                options.AddPolicy("CORSPolicy",
                     builder => builder
-                        .AllowAnyOrigin()
+                        .WithOrigins("https://localhost:7178/swagger/index.html")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials());
+                        .AllowCredentials()
+                        );
             });
 
             var app = builder.Build();
+            app.UseCors ();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -80,6 +84,7 @@ namespace Rova_2023
             app.UseSession();
 
             app.UseAuthorization();
+            
 
 
             app.MapControllers();

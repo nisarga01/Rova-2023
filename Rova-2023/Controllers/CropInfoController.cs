@@ -17,7 +17,7 @@ namespace Rova_2023.Controllers
             cropinfoServices = cropInfoServices;
 
         }
-        [AllowAnonymous]
+
         [EnableCors("CORSPolicy")]
         [HttpPost("AddCropInfo")]
         public async Task<IActionResult> AddCropInfo([FromBody] CropInfoRequestDTO cropInfoRequestDTO)
@@ -28,7 +28,7 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
         }
 
-        [AllowAnonymous]
+
         [EnableCors("CORSPolicy")]
         [HttpGet("GetAllCrops")]
         public async Task<IActionResult> GetAllCrops([FromQuery] string modelname)
