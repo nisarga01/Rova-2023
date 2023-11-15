@@ -11,14 +11,13 @@ namespace Rova_2023.Services
 {
     public interface IUserServices
     {
-        Task<ServiceResponse<string>> AddUserDetailstoSessionAsync(UserRequestDTO userRequestDTO);
+        Task<ServiceResponse<string>> AddUserDetailstoSessionAsync(UserRequestDTO UserRequestDTO);
 
         Task<ServiceResponse<string>> SendOtpAsync(string phoneNumber);
-        Task<ServiceResponse<Users>> VerifyOtpAsync(string enteredotp);
-        Task<ServiceResponse<bool>> LoginAsync(string PhoneNumber);
-        Task<ServiceResponse<LoginResponseDTO >> VerifyLoginOtpAsync(string enteredotp);
-        //Task<ServiceResponse<LoginResponseDTO>> SendResponse(LoginResponseDTO loginresponsedto);
-
+        Task<ServiceResponse<Users>> VerifyOtpAsync(string EnteredOtp);
+        Task<ServiceResponse<string >> LoginAsync(string PhoneNumber);
+        Task<ServiceResponse<LoginResponseDTO >> VerifyLoginOtpAsync(string EnteredOtp);
+        
 
 
     }

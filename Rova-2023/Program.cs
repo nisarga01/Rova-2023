@@ -57,14 +57,17 @@ namespace Rova_2023
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 options.EnableSensitiveDataLogging();
             });
-            /*builder.Services.AddSession(options =>
+            builder.Services.AddCors(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(10); // Adjust the timeout as needed
-                options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-            });*/
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
 
-            var  app = builder.Build();
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

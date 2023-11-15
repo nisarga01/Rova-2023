@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Rova_2023.DTO.LoginResponseDTO;
 using Rova_2023.DTO.RegisterationDTO;
@@ -22,18 +24,22 @@ namespace Rova_2023.Controllers
             this.httpContextAccessor = httpContextAccessor;
 
         }
-
+        [AllowAnonymous]
+        [EnableCors("CORSPolicy")]
         [HttpPost("SignUp")]
-        public async Task<IActionResult> SignUp([FromBody] UserRequestDTO userRequestDTO)
+        public async Task<IActionResult> SignUp([FromBody] UserRequestDTO UserRequestDTO)
         {
             
-            var result = await userServices.AddUserDetailstoSessionAsync(userRequestDTO);
+            var result = await userServices.AddUserDetailstoSessionAsync(UserRequestDTO);
 
             if (result.success)
                 return Ok(result);
             return BadRequest(result);
         }
 
+
+        [AllowAnonymous]
+        [EnableCors("CORSPolicy")]
         [HttpPost("VerifyOTP")]
         public async Task<IActionResult> VerifyOTP(string enteredOTP )
         {
@@ -57,6 +63,9 @@ namespace Rova_2023.Controllers
                 return Ok(result);
             return BadRequest(result);
         }*/
+
+        [AllowAnonymous]
+        [EnableCors("CORSPolicy")]
         [HttpPost("login")]
         public async Task<IActionResult> Login(string PhoneNumber)
         {
@@ -67,6 +76,8 @@ namespace Rova_2023.Controllers
             return BadRequest(result);
         }
 
+        [AllowAnonymous]
+        [EnableCors("CORSPolicy")]
         [HttpPost("VerifyloginOTP")]
         public async Task<IActionResult> VerifyloginOTP(string enteredotp)
         {
