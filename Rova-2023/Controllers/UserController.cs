@@ -41,10 +41,10 @@ namespace Rova_2023.Controllers
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
         [HttpPost("VerifyOTP")]
-        public async Task<IActionResult> VerifyOTP(string enteredOTP )
+        public async Task<IActionResult> VerifyOTP(string EnteredOTP )
         {
             
-            var result = await userServices.VerifyOtpAsync(enteredOTP);
+            var result = await userServices.VerifyOtpAsync(EnteredOTP);
 
             if (result.success)
                 return Ok(result);
