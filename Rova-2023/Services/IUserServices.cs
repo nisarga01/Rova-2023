@@ -9,9 +9,9 @@ namespace Rova_2023.Services
     {
         Task<ServiceResponse<string>> addUserDetailsToSessionAsync(UserRequestDTO userRequestDto);
         Task<ServiceResponse<string>> sendOtpToThePhoneNumberAsync(string phoneNumber);
-        Task<ServiceResponse<Users>> verifyOtpSendToThePhoneNumberAsync(string EnteredOtp);
+        Task<ServiceResponse<Users>> verifyOtpAsync(string EnteredOtp);
         Task<ServiceResponse<string>> LoginAsync(string phoneNumber);
-        Task<ServiceResponse<LoginResponseDTO>> verifyLoginOtpSendToThePhoneNumberAsync(string EnteredOtp);
+        Task<ServiceResponse<LoginResponseDTO>> verifyLoginOtpAsync(string EnteredOtp);
 
     }
 }

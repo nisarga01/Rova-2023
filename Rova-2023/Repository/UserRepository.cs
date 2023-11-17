@@ -49,7 +49,7 @@ namespace Rova_2023.Repository
         }
 
         //fetch the user details through phone number
-        public async Task<Users> getUserDetailsThroughPhoneNumberAsync(string PhoneNumber)
+        public async Task<Users> getUserDetailsByPhoneNumberAsync(string PhoneNumber)
         {
             return await rovaDBContext.Users
                 .Where(u => u.Phone == PhoneNumber)

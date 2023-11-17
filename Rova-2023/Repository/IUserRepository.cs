@@ -7,7 +7,7 @@ namespace Rova_2023.Repository
     {
         Task<bool> checkUserExistOrNotAsync(string Name, string Phone);
         Task<ServiceResponse<Users>> addUserDetailsToDatabaseAsync(Users User);
-        Task<Users> getUserDetailsThroughPhoneNumberAsync(string phoneNumber);
+        Task<Users> getUserDetailsByPhoneNumberAsync(string phoneNumber);
     }
 }
 

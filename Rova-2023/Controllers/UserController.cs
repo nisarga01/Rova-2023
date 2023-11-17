@@ -38,7 +38,7 @@ namespace Rova_2023.Controllers
         public async Task<IActionResult> verifyOtp(string enteredOtp)
         {
             // verify the otp send to the phone number
-            var Result = await userServices.verifyOtpSendToThePhoneNumberAsync(enteredOtp);
+            var Result = await userServices.verifyOtpAsync(enteredOtp);
             if (Result.Success)
                 return Ok(Result);
             return BadRequest(Result);
@@ -63,7 +63,7 @@ namespace Rova_2023.Controllers
         public async Task<IActionResult> verifyLoginOtp(string enteredOtp)
         {
             //verify the otp send to the phone number
-            var Result = await userServices.verifyLoginOtpSendToThePhoneNumberAsync(enteredOtp);
+            var Result = await userServices.verifyLoginOtpAsync(enteredOtp);
             if (Result.Success)
                 return Ok(Result);
             return BadRequest(Result);

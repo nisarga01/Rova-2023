@@ -144,7 +144,7 @@ namespace Rova_2023.Services
         }
 
         //verify the otp send to the phone number
-        public async Task<ServiceResponse<Users>> verifyOtpSendToThePhoneNumberAsync(string enteredOtp)
+        public async Task<ServiceResponse<Users>> verifyOtpAsync(string enteredOtp)
         {
             //getting the otp stored in the session
             string storedOtp = httpContextAccessor.HttpContext.Session.GetString("UserOTP");
@@ -194,7 +194,7 @@ namespace Rova_2023.Services
             try
             {
                 //get the user in database through phone number
-                var User = await userRepository.getUserDetailsThroughPhoneNumberAsync(phoneNumber);
+                var User = await userRepository.getUserDetailsByPhoneNumberAsync(phoneNumber);
                 if (User == null)
                 {
                     var errorResponse = new ServiceResponse<string>
@@ -257,7 +257,7 @@ namespace Rova_2023.Services
             }
         }
         //verify the otp send to the phone number which is existed in the database
-        public async Task<ServiceResponse<LoginResponseDTO>> verifyLoginOtpSendToThePhoneNumberAsync(string enteredOtp)
+        public async Task<ServiceResponse<LoginResponseDTO>> verifyLoginOtpAsync(string enteredOtp)
         {
             try
             {
