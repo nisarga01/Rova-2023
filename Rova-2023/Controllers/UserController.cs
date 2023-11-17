@@ -10,7 +10,7 @@ using Rova_2023.Services;
 
 namespace Rova_2023.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Users")]
     [ApiController]
     public class UserController : ControllerBase
     {

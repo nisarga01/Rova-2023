@@ -55,7 +55,7 @@ namespace Rova_2023.Repository
             }
         }
        
-        public async Task<Users> CheckUserByPhoneNumberAsync(string PhoneNumber)
+        public async Task<Users> GetUserByPhoneNumberAsync(string PhoneNumber)
         {
             return await rovaDBContext.Users
                 .Where(u => u.Phone == PhoneNumber)

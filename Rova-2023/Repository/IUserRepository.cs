@@ -10,7 +10,7 @@ namespace Rova_2023.Repository
     {
         Task<bool> CheckUserDetailsinDatabaseAsync(string Name, string Phone);
         Task<ServiceResponse<Users>> AddUsertoDatabaseAsync(Users User);
-        Task<Users> CheckUserByPhoneNumberAsync(string phoneNumber);
+        Task<Users> GetUserByPhoneNumberAsync(string phoneNumber);
 
 
 

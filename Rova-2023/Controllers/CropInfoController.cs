@@ -7,7 +7,7 @@ using Rova_2023.Services;
 
 namespace Rova_2023.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/CropInfo")]
     [ApiController]
     public class CropInfoController : ControllerBase
     {

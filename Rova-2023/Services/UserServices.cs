@@ -199,7 +199,7 @@ namespace Rova_2023.Services
         {
             try
             {
-                var User = await userRepository.CheckUserByPhoneNumberAsync(PhoneNumber);
+                var User = await userRepository.GetUserByPhoneNumberAsync(PhoneNumber);
                 if (User == null)
                 {
                     var ErrorResponse = new ServiceResponse<string>
