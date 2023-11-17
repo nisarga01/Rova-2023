@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Rova_2023.DTO.CropInfo_DTO;
+﻿using Rova_2023.DTO.CropInfo_DTO;
 using Rova_2023.Models;
 using Rova_2023.Repository;
 using Rova_2023.Utilities;
@@ -13,47 +12,45 @@ namespace Rova_2023.Services
         {
             this.cropInfoRepository = cropInfoRepository;
         }
-        public async Task<ServiceResponse<CropInfoResponseDTO>> AddCropInfoAsync(CropInfoRequestDTO cropInfoRequestDTO)
+        public async Task<ServiceResponse<CropInfoResponseDTO>> addCropDetailsAsync(CropInfoRequestDTO cropInfoRequestDTO)
         {
-
-            var cropinfo = new CropInfo()
+            var cropInfo = new CropInfo()
             {
                 CropName = cropInfoRequestDTO.CropName,
                 CropDiseaseName = cropInfoRequestDTO.CropDiseaseName,
                 Symptoms = cropInfoRequestDTO.Symptoms,
                 Solutions = cropInfoRequestDTO.Solutions,
                 ModelName = cropInfoRequestDTO.ModelName,
-
             };
-            var result = await cropInfoRepository.AddCropInfoAsync(cropinfo);
+            var Result = await cropInfoRepository.addCropDetailsAsync(cropInfo);
 
-            var response = new ServiceResponse<CropInfoResponseDTO>()
+            var Response = new ServiceResponse<CropInfoResponseDTO>()
             {
-                data = result.success ? new CropInfoResponseDTO()
+                Data = Result.Success ? new CropInfoResponseDTO()
                 {
-                    Id = result.data.Id,
-                    CropName = result.data.CropName,
-                    CropDiseaseName = result.data.CropDiseaseName,
-                    Symptoms = result.data.Symptoms,
-                    Solutions = result.data.Solutions,
-                    ModelName = result.data.ModelName,
+                    Id = Result.Data.Id,
+                    CropName = Result.Data.CropName,
+                    CropDiseaseName = Result.Data.CropDiseaseName,
+                    Symptoms = Result.Data.Symptoms,
+                    Solutions = Result.Data.Solutions,
+                    ModelName = Result.Data.ModelName,
                 } : null,
-                success = result.success,
-                Errormessage = result.Errormessage,
-                ResultMessage = result.ResultMessage
+                Success = Result.Success,
+                ErrorMessage = Result.ErrorMessage,
+                ResultMessage = Result.ResultMessage
             };
-            return response;
+            return Response;
         }
-        public async Task<ServiceResponse<List<CropInfoResponseDTO>>> GetAllCropsAsync(string modelname)
-
+        public async Task<ServiceResponse<List<CropInfoResponseDTO>>> getCropDetailsByModelNameAsync(string modelName)
         {
-            var result = await cropInfoRepository.GetAllCropsAsync(modelname);
+            //fetch the crop details through modelName
+            var Result = await cropInfoRepository.getCropDetailsByModelNameAsync(modelName);
 
-            var getcrops = new List<CropInfoResponseDTO>();
+            var getCrops = new List<CropInfoResponseDTO>();
 
-            if (result.success)
+            if (Result.Success)
             {
-                result.data.ForEach(d =>
+                Result.Data.ForEach(d =>
                 {
                     CropInfoResponseDTO cropInfoResponseDTO = new CropInfoResponseDTO()
                     {
@@ -63,28 +60,26 @@ namespace Rova_2023.Services
                         Symptoms = d.Symptoms,
                         Solutions = d.Solutions,
                         ModelName = d.ModelName,
-
                     };
 
-                    getcrops.Add(cropInfoResponseDTO);
+                    getCrops.Add(cropInfoResponseDTO);
                 });
             }
-
-            var response = new ServiceResponse<List<CropInfoResponseDTO>>()
+            var Response = new ServiceResponse<List<CropInfoResponseDTO>>()
             {
-                data = result.success ? getcrops : null,
-                success = result.success,
-                ResultMessage = result.ResultMessage,
-                Errormessage = result.Errormessage
+                Data = Result.Success ? getCrops : null,
+                Success = Result.Success,
+                ResultMessage = Result.ResultMessage,
+                ErrorMessage = Result.ErrorMessage
             };
-
-            return response;
+            return Response;
         }
     }
-
-
-
 }
+
+
+
+
 
 
 

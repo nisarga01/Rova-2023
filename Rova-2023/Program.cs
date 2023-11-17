@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Rova_2023.Data;
 using Rova_2023.Repository;
 using Rova_2023.Services;
-using System.Reflection.Emit;
 using System.Text;
 
 namespace Rova_2023
@@ -47,7 +45,7 @@ namespace Rova_2023
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
-                
+
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
@@ -63,16 +61,16 @@ namespace Rova_2023
             {
                 options.AddPolicy("CORSPolicy",
                     builder => builder
-                        .WithOrigins("https://localhost:7178/swagger/index.html") 
+                        .WithOrigins("https://localhost:7178/swagger/index.html")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials()
                         .SetIsOriginAllowed((hosts) => true));
-                        
+
             });
 
             var app = builder.Build();
-            app.UseCors ("CORSPolicy");
+            app.UseCors("CORSPolicy");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

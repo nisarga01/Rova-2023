@@ -1,82 +1,76 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.IdentityModel.Tokens;
-using Rova_2023.Data;
+﻿using Microsoft.IdentityModel.Tokens;
 using Rova_2023.DTO.LoginResponseDTO;
-using Rova_2023.DTO.RegisterationDTO;
 using Rova_2023.DTO.User_DTO;
 using Rova_2023.Models;
 using Rova_2023.Repository;
 using Rova_2023.Utilities;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
-using System.Numerics;
 using System.Security.Claims;
 using System.Text;
-using System.Xml.Linq;
-using Twilio.Types;
 
 namespace Rova_2023.Services
 {
     public class UserServices : IUserServices
     {
         public readonly IUserRepository userRepository;
-        public readonly IConfiguration configuration;
+        public readonly IConfiguration Configuration;
         public readonly IHttpClientFactory httpClientFactory;
         public readonly IHttpContextAccessor httpContextAccessor;
 
-        public UserServices(IUserRepository userRepository, IConfiguration configuration, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+        public UserServices(IUserRepository userRepository, IConfiguration Configuration, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
         {
             this.userRepository = userRepository;
-            this.configuration = configuration;
+            this.Configuration = Configuration;
             this.httpClientFactory = httpClientFactory;
             this.httpContextAccessor = httpContextAccessor;
-
-
         }
-        public async Task<ServiceResponse<string>> AddUserDetailstoSessionAsync(UserRequestDTO UserRequestDTO)
+
+        //adding the user entered details to the session
+        public async Task<ServiceResponse<string>> addUserDetailsToSessionAsync(UserRequestDTO userRequestDto)
         {
-            var ExistingUser = await userRepository.CheckUserDetailsinDatabaseAsync(UserRequestDTO.Name, UserRequestDTO.Phone);
-            if (ExistingUser)
+            //checking the user entered details in the database
+            var existingUser = await userRepository.checkUserExistOrNotAsync(userRequestDto.Name, userRequestDto.Phone);
+            if (existingUser)
             {
-                var ErrorResponse = new ServiceResponse<string>
+                var errorResponse = new ServiceResponse<string>
                 {
-                    success = false,
+                    Success = false,
                     ResultMessage = "User already exists in the database, please login !"
                 };
-                return ErrorResponse;
+                return errorResponse;
             }
-            if (string.IsNullOrEmpty(UserRequestDTO.Name) || !UserRequestDTO.Name.All(char.IsLetter))
+            if (string.IsNullOrEmpty(userRequestDto.Name) || !userRequestDto.Name.All(char.IsLetter))
             {
-                var ErrorResponse = new ServiceResponse<string>
+                var errorResponse = new ServiceResponse<string>
                 {
-                    success = false,
-                    Errormessage = "Validation failed",
+                    Success = false,
+                    ErrorMessage = "Validation failed",
                     ResultMessage = "User Name should not be empty and should contain only letters"
                 };
-                return ErrorResponse;
+                return errorResponse;
             }
-            if (string.IsNullOrEmpty(UserRequestDTO.Phone) || !UserRequestDTO.Phone.All(char.IsDigit) || UserRequestDTO.Phone.Length != 10)
+            if (string.IsNullOrEmpty(userRequestDto.Phone) || !userRequestDto.Phone.All(char.IsDigit) || userRequestDto.Phone.Length != 10)
             {
-                var ErrorResponse = new ServiceResponse<string>
+                var errorResponse = new ServiceResponse<string>
                 {
-                    success = false,
-                    Errormessage = "Validation failed",
+                    Success = false,
+                    ErrorMessage = "Validation failed",
                     ResultMessage = "Phone number should not be empty and contain exactly 10 digits"
                 };
-                return ErrorResponse;
+                return errorResponse;
             }
 
-            var SendOtpResult = await SendOtpAsync(UserRequestDTO.Phone);
-            if (SendOtpResult.success)
+            //calling sendOtp method by passing a parameter
+            var sendOtpResult = await sendOtpToThePhoneNumberAsync(userRequestDto.Phone);
+            if (sendOtpResult.Success)
             {
-                httpContextAccessor.HttpContext.Session.SetString("UserName", UserRequestDTO.Name);
-                httpContextAccessor.HttpContext.Session.SetString("UserPhone", UserRequestDTO.Phone);
+                //storing the user Name and phonenumber in the session
+                httpContextAccessor.HttpContext.Session.SetString("UserName", userRequestDto.Name);
+                httpContextAccessor.HttpContext.Session.SetString("UserPhone", userRequestDto.Phone);
 
                 return new ServiceResponse<string>
                 {
-                    success = true,
+                    Success = true,
                     ResultMessage = "OTP sent successfully to the phone, please verify in the next step",
 
                 };
@@ -84,31 +78,31 @@ namespace Rova_2023.Services
             }
             return new ServiceResponse<string>
             {
-                success = false,
-                Errormessage = "Failed to send OTP",
-
+                Success = false,
+                ErrorMessage = "Failed to send OTP",
             };
 
         }
 
-        public string GenerateOtp()
+        public string generateOtp()
         {
             Random Random = new Random();
-            int OtpNumber = Random.Next(1000, 9999);
-            return OtpNumber.ToString("D4");
+            int otpNumber = Random.Next(1000, 9999);
+            return otpNumber.ToString("D4");
         }
-        public async Task<ServiceResponse<string>> SendOtpAsync(string PhoneNumber)
+
+        //sending otp to the phone number
+        public async Task<ServiceResponse<string>> sendOtpToThePhoneNumberAsync(string PhoneNumber)
         {
             try
             {
+                var httpContext = httpContextAccessor.HttpContext;
+                string Otp = generateOtp();
+                httpContext.Session.SetString("UserOTP", Otp);// storing the otp in session
 
-                var HttpContext = httpContextAccessor.HttpContext;
-                string Otp = GenerateOtp();
-                HttpContext.Session.SetString("UserOTP", Otp);
-
-                var HttpClient = httpClientFactory.CreateClient();
-                HttpClient.BaseAddress = new Uri("https://www.fast2sms.com/dev/bulkV2");
-                HttpClient.DefaultRequestHeaders.Add("Authorization", configuration["Fast2Sms:ApiKey"]);
+                var httpClient = httpClientFactory.CreateClient();
+                httpClient.BaseAddress = new Uri("https://www.fast2sms.com/dev/bulkV2");
+                httpClient.DefaultRequestHeaders.Add("Authorization", Configuration["Fast2Sms:ApiKey"]);
 
                 var Payload = new
                 {
@@ -119,13 +113,12 @@ namespace Rova_2023.Services
                     flash = "0",
                 };
 
-                var Response = await HttpClient.PostAsJsonAsync("https://www.fast2sms.com/dev/bulkV2", Payload);
+                var Response = await httpClient.PostAsJsonAsync("https://www.fast2sms.com/dev/bulkV2", Payload);
                 if (Response.IsSuccessStatusCode)
                 {
                     return new ServiceResponse<string>
                     {
-
-                        success = true,
+                        Success = true,
                         ResultMessage = "otp sent successfully",
                     };
                 }
@@ -133,7 +126,7 @@ namespace Rova_2023.Services
                 {
                     return new ServiceResponse<string>
                     {
-                        success = false,
+                        Success = false,
                         ResultMessage = "Failed to send OTP",
                     };
                 }
@@ -143,42 +136,42 @@ namespace Rova_2023.Services
             {
                 return new ServiceResponse<string>
                 {
-                    success = false,
+                    Success = false,
                     ResultMessage = "Failed to send OTP",
-                    Errormessage = ex.Message
-
+                    ErrorMessage = ex.Message
                 };
             }
         }
 
-        public async Task<ServiceResponse<Users>> VerifyOtpAsync(string EnteredOtp)
+        //verify the otp send to the phone number
+        public async Task<ServiceResponse<Users>> verifyOtpSendToThePhoneNumberAsync(string enteredOtp)
         {
-            string StoredOtp = httpContextAccessor.HttpContext.Session.GetString("UserOTP");
+            //getting the otp stored in the session
+            string storedOtp = httpContextAccessor.HttpContext.Session.GetString("UserOTP");
 
-            if (StoredOtp == EnteredOtp)
+            if (storedOtp == enteredOtp)
             {
                 var User = new Users
                 {
                     Name = httpContextAccessor.HttpContext.Session.GetString("UserName"),
                     Phone = httpContextAccessor.HttpContext.Session.GetString("UserPhone"),
                 };
-                var UserResponse = await userRepository.AddUsertoDatabaseAsync(User);
-                if (UserResponse.success)
+                var userResponse = await userRepository.addUserDetailsToDatabaseAsync(User);//adding the user details from session to database
+                if (userResponse.Success)
                 {
                     return new ServiceResponse<Users>
                     {
-                        success = true,
+                        Success = true,
                         ResultMessage = "OTP is verified.",
-                        data = User
-
+                        Data = User
                     };
                 }
                 else
                 {
                     return new ServiceResponse<Users>
                     {
-                        success = false,
-                        Errormessage = "Failed to add user to the database",
+                        Success = false,
+                        ErrorMessage = "Failed to add user to the database",
                         ResultMessage = "Please try again later."
                     };
                 }
@@ -188,68 +181,67 @@ namespace Rova_2023.Services
             {
                 return new ServiceResponse<Users>
                 {
-                    success = false,
-                    Errormessage = "Incorrect OTP.",
+                    Success = false,
+                    ErrorMessage = "Incorrect OTP.",
                     ResultMessage = "Please enter the correct OTP."
                 };
             }
         }
 
-        public async Task<ServiceResponse<string>> LoginAsync(string PhoneNumber)
+        //login for the user already existed in database by giving phone number
+        public async Task<ServiceResponse<string>> LoginAsync(string phoneNumber)
         {
             try
             {
-                var User = await userRepository.GetUserByPhoneNumberAsync(PhoneNumber);
+                //get the user in database through phone number
+                var User = await userRepository.getUserDetailsThroughPhoneNumberAsync(phoneNumber);
                 if (User == null)
                 {
-                    var ErrorResponse = new ServiceResponse<string>
+                    var errorResponse = new ServiceResponse<string>
                     {
-                        success = false,
+                        Success = false,
                         ResultMessage = "User not found, please Signup!",
-                        Errormessage = "User not found!"
+                        ErrorMessage = "User not found!"
                     };
-                    return ErrorResponse;
+                    return errorResponse;
                 }
-                var HttpContext = httpContextAccessor.HttpContext;
-                HttpContext.Session.SetString("UserId", User.Id.ToString());
-                HttpContext.Session.SetString("UserName", User.Name);
-                HttpContext.Session.SetString("UserPhone", User.Phone);
+                var httpContext = httpContextAccessor.HttpContext;
+                httpContext.Session.SetString("UserId", User.Id.ToString());
+                httpContext.Session.SetString("UserName", User.Name);
+                httpContext.Session.SetString("UserPhone", User.Phone);
 
-                string Otp = GenerateOtp();
-                var HttpClient = httpClientFactory.CreateClient();
-                HttpClient.BaseAddress = new Uri("https://www.fast2sms.com/dev/bulkV2");
-                HttpClient.DefaultRequestHeaders.Add("Authorization", configuration["Fast2Sms:ApiKey"]);
+                string Otp = generateOtp();
+                var httpClient = httpClientFactory.CreateClient();
+                httpClient.BaseAddress = new Uri("https://www.fast2sms.com/dev/bulkV2");
+                httpClient.DefaultRequestHeaders.Add("Authorization", Configuration["Fast2Sms:ApiKey"]);
 
                 var Payload = new
                 {
                     language = "english",
                     route = "otp",
                     variables_values = Otp,
-                    numbers = PhoneNumber,
+                    numbers = phoneNumber,
                     flash = "0",
                 };
 
-                var Response = await HttpClient.PostAsJsonAsync("https://www.fast2sms.com/dev/bulkV2", Payload);
+                var Response = await httpClient.PostAsJsonAsync("https://www.fast2sms.com/dev/bulkV2", Payload);
 
                 if (Response.IsSuccessStatusCode)
                 {
-                    HttpContext.Session.SetString("UserLoginOTP", Otp);
-
+                    httpContext.Session.SetString("UserLoginOTP", Otp);
                     return new ServiceResponse<string>
                     {
-                        success = true,
+                        Success = true,
                         ResultMessage = "OTP sent successfully to the phone, please verify in the next step",
-
                     };
                 }
                 else
                 {
                     return new ServiceResponse<string>
                     {
-                        success = false,
-                        Errormessage = "Failed to send OTP",
+                        Success = false,
+                        ErrorMessage = "Failed to send OTP",
                         ResultMessage = "Error occurred while sending OTP. Please try again",
-
                     };
                 }
             }
@@ -257,73 +249,72 @@ namespace Rova_2023.Services
             {
                 return new ServiceResponse<string>
                 {
-                    success = false,
+                    Success = false,
                     ResultMessage = "Failed to send OTP",
-                    Errormessage = ex.Message,
+                    ErrorMessage = ex.Message,
 
                 };
             }
         }
-
-        public async Task<ServiceResponse<LoginResponseDTO>> VerifyLoginOtpAsync(string EnteredOtp)
+        //verify the otp send to the phone number which is existed in the database
+        public async Task<ServiceResponse<LoginResponseDTO>> verifyLoginOtpSendToThePhoneNumberAsync(string enteredOtp)
         {
             try
             {
-                string StoredOTP = httpContextAccessor.HttpContext.Session.GetString("UserLoginOTP");
+                string storedOtp = httpContextAccessor.HttpContext.Session.GetString("UserLoginOTP");
                 string Id = httpContextAccessor.HttpContext.Session.GetString("UserId");
                 string Name = httpContextAccessor.HttpContext.Session.GetString("UserName");
                 string Phone = httpContextAccessor.HttpContext.Session.GetString("UserPhone");
 
-                if (StoredOTP == EnteredOtp)
+                if (storedOtp == enteredOtp)
                 {
-                    var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+                    var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]));
                     var Creds = new SigningCredentials(Key, SecurityAlgorithms.HmacSha256);
                     var Claims = new[]
                     {
                         new Claim(ClaimTypes.NameIdentifier,Id),
                     };
-                
+
                     var Token = new JwtSecurityToken
                        (
-                       issuer: configuration["Jwt:Issuer"],
-                       audience: configuration["Jwt:Audience"],
+                       issuer: Configuration["Jwt:Issuer"],
+                       audience: Configuration["Jwt:Audience"],
                        claims: Claims,
                        expires: DateTime.UtcNow.AddHours(72),
                        signingCredentials: Creds
                        );
-                    var TokenHandler = new JwtSecurityTokenHandler();
-                    var TokenString = TokenHandler.WriteToken(Token);
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var tokenString = tokenHandler.WriteToken(Token);
 
-                    var loginResponseDTO = new LoginResponseDTO()
+                    var loginResponseDto = new LoginResponseDTO()
                     {
                         Id = Convert.ToInt32(Id),
                         Name = Name,
                         Phone = Phone,
-                        Token = TokenString
+                        Token = tokenString
 
                     };
                     return new ServiceResponse<LoginResponseDTO>
                     {
-                        success = true,
+                        Success = true,
                         ResultMessage = "Token is valid up to 24 hours",
-                        data = loginResponseDTO
+                        Data = loginResponseDto
                     };
                 }
                 return new ServiceResponse<LoginResponseDTO>
                 {
-                    data = null,
-                    success = false,
-                    Errormessage = "Incorrect OTP, Please enter correct otp"
+                    Data = null,
+                    Success = false,
+                    ErrorMessage = "Incorrect OTP, Please enter correct otp"
                 };
             }
             catch (Exception ex)
             {
                 return new ServiceResponse<LoginResponseDTO>
                 {
-                    success = false,
+                    Success = false,
                     ResultMessage = "Failed to send OTP, Please try again",
-                    Errormessage = ex.Message,
-
+                    ErrorMessage = ex.Message,
                 };
 
             }
@@ -333,8 +324,6 @@ namespace Rova_2023.Services
 }
 
 
-           
-  
 
 
 
@@ -342,22 +331,24 @@ namespace Rova_2023.Services
 
 
 
-            
 
 
 
 
-            
-    
 
 
 
-                
-            
 
 
-        
-    
+
+
+
+
+
+
+
+
+
 
 
 

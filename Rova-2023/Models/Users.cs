@@ -13,6 +13,6 @@ namespace Rova_2023.Models
 
         public string? Crops { get; set; }
 
-    
+
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Rova_2023.DTO.LoginResponseDTO;
-using Rova_2023.DTO.RegisterationDTO;
 using Rova_2023.DTO.User_DTO;
 using Rova_2023.Services;
 
@@ -17,74 +14,59 @@ namespace Rova_2023.Controllers
         public readonly IUserServices userServices;
         public readonly IHttpContextAccessor httpContextAccessor;
 
-
         public UserController(IUserServices userServices, IHttpContextAccessor httpContextAccessor)
         {
             this.userServices = userServices;
             this.httpContextAccessor = httpContextAccessor;
-
         }
 
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
-        [HttpPost("SignUp")]
-        public async Task<IActionResult> SignUp([FromBody] UserRequestDTO UserRequestDTO)
+        [HttpPost("signUp")]        
+        public async Task<IActionResult> signUp([FromBody] UserRequestDTO userRequestDto)
         {
-            
-            var result = await userServices.AddUserDetailstoSessionAsync(UserRequestDTO);
-
-            if (result.success)
-                return Ok(result);
-            return BadRequest(result);
+            //storing the details entered by the user to the session
+            var Result = await userServices.addUserDetailsToSessionAsync(userRequestDto);
+            if (Result.Success)
+                return Ok(Result);
+            return BadRequest(Result);
         }
 
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
-        [HttpPost("VerifyOTP")]
-        public async Task<IActionResult> VerifyOTP(string EnteredOTP )
+        [HttpPost("verifyOtp")]
+        public async Task<IActionResult> verifyOtp(string enteredOtp)
         {
-            
-            var result = await userServices.VerifyOtpAsync(EnteredOTP);
-
-            if (result.success)
-                return Ok(result);
-
-            return BadRequest(result);
+            // verify the otp send to the phone number
+            var Result = await userServices.verifyOtpSendToThePhoneNumberAsync(enteredOtp);
+            if (Result.Success)
+                return Ok(Result);
+            return BadRequest(Result);
 
         }
-        /*[HttpPost("SendOTP")]
-        public async Task<IActionResult> SendOTP(string phonenumber)
-        {
-            
-            var result = await userServices.SendOtpAsync(phonenumber);
-
-            if (result.success)
-
-                return Ok(result);
-            return BadRequest(result);
-        }*/
+       
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(string PhoneNumber)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(string phoneNumber)
         {
-            var result = await userServices.LoginAsync(PhoneNumber);
-
-            if (result.success)
-                return Ok(result);
-            return BadRequest(result);
+            //login by giving phone number
+            var Result = await userServices.LoginAsync(phoneNumber);
+            if (Result.Success)
+                return Ok(Result);
+            return BadRequest(Result);
         }
 
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
-        [HttpPost("VerifyloginOTP")]
-        public async Task<IActionResult> VerifyloginOTP(string EnteredOtp)
+        [HttpPost("verifyLoginOtp")]
+        public async Task<IActionResult> verifyLoginOtp(string enteredOtp)
         {
-            var result = await userServices.VerifyLoginOtpAsync(EnteredOtp);
-
-            if (result.success)
-                return Ok(result);
-            return BadRequest(result);
+            //verify the otp send to the phone number
+            var Result = await userServices.verifyLoginOtpSendToThePhoneNumberAsync(enteredOtp);
+            if (Result.Success)
+                return Ok(Result);
+            return BadRequest(Result);
         }
 
 

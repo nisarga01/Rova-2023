@@ -1,14 +1,8 @@
 ﻿using Rova_2023.Data;
 using Rova_2023.Models;
 using Rova_2023.Utilities;
-using Rova_2023.DTO.RegisterationDTO;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
-using Rova_2023.DTO.User_DTO;
-using System.Numerics;
-using System.Xml.Linq;
-using Rova_2023.DTO.LoginResponseDTO;
-using Twilio.Jwt.AccessToken;
 
 namespace Rova_2023.Repository
 {
@@ -21,46 +15,46 @@ namespace Rova_2023.Repository
             this.rovaDBContext = rovaDBContext;
             this.memoryCache = memoryCache;
         }
-
-        public async Task<bool> CheckUserDetailsinDatabaseAsync(string Name, string Phone)
+        //check the user existance in the database
+        public async Task<bool> checkUserExistOrNotAsync(string Name, string Phone)
         {
             var IsExist = await rovaDBContext.Users.AnyAsync(u => u.Name == Name && u.Phone == Phone);
             return IsExist;
         }
 
-
-        public async Task<ServiceResponse<Users>> AddUsertoDatabaseAsync(Users User)
+        //add the user details to the database
+        public async Task<ServiceResponse<Users>> addUserDetailsToDatabaseAsync(Users User)
         {
             try
             {
-
                 await rovaDBContext.Users.AddAsync(User);
                 await rovaDBContext.SaveChangesAsync();
 
                 return new ServiceResponse<Users>
                 {
-                    success = true,
+                    Success = true,
                     ResultMessage = "User added to the database",
-                    data = User
+                    Data = User
                 };
             }
             catch (Exception ex)
             {
                 return new ServiceResponse<Users>
                 {
-                    success = false,
-                    Errormessage = "Failed to add user to the database",
+                    Success = false,
+                    ErrorMessage = "Failed to add user to the database",
                     ResultMessage = ex.Message
                 };
             }
         }
-       
-        public async Task<Users> GetUserByPhoneNumberAsync(string PhoneNumber)
+
+        //fetch the user details through phone number
+        public async Task<Users> getUserDetailsThroughPhoneNumberAsync(string PhoneNumber)
         {
             return await rovaDBContext.Users
                 .Where(u => u.Phone == PhoneNumber)
                 .FirstOrDefaultAsync();
-            
+
         }
 
     }

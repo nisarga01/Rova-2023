@@ -12,7 +12,7 @@ namespace Rova_2023.Data
         public DbSet<Users> Users { get; set; } = default!;
 
         public DbSet<CropInfo> CropInfo { get; set; } = default!;
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var listConverter = new ListOfStringConverter();
@@ -37,5 +37,5 @@ namespace Rova_2023.Data
     }
 }
 
-    
+
 

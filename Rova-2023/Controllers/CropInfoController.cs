@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Rova_2023.DTO.CropInfo_DTO;
-using Rova_2023.Models;
 using Rova_2023.Services;
 
 namespace Rova_2023.Controllers
@@ -11,35 +10,34 @@ namespace Rova_2023.Controllers
     [ApiController]
     public class CropInfoController : ControllerBase
     {
-        public readonly ICropInfoServices cropinfoServices;
+        public readonly ICropInfoServices cropInfoServices;
         public CropInfoController(ICropInfoServices cropInfoServices)
         {
-            cropinfoServices = cropInfoServices;
-
+            this.cropInfoServices = cropInfoServices;
         }
 
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
-        [HttpPost("AddCropInfo")]
-        public async Task<IActionResult> AddCropInfo([FromBody] CropInfoRequestDTO cropInfoRequestDTO)
+        [HttpPost("addCropDetails")]
+        public async Task<IActionResult> addCropDetails([FromBody] CropInfoRequestDTO cropInfoRequestDTO)
         {
-            var result = await cropinfoServices.AddCropInfoAsync(cropInfoRequestDTO);
-            if (result.success)
-                return Ok(result);
-            return BadRequest(result);
+            //adding crop details
+            var Result = await cropInfoServices.addCropDetailsAsync(cropInfoRequestDTO);
+            if (Result.Success)
+                return Ok(Result);
+            return BadRequest(Result);
         }
-
 
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
-        [HttpGet("GetAllCrops")]
-        public async Task<IActionResult> GetAllCrops([FromQuery] string modelname)
+        [HttpGet("getAllCrops")]
+        public async Task<IActionResult> getCropDetailsByModelName([FromQuery] string modelName)
         {
-            var result = await cropinfoServices.GetAllCropsAsync(modelname);
-
-            if (result.success)
-                return Ok(result);
-            return BadRequest(result);
+            //get details of the crop
+            var Result = await cropInfoServices.getCropDetailsByModelNameAsync(modelName);
+            if (Result.Success)
+                return Ok(Result);
+            return BadRequest(Result);
         }
 
 

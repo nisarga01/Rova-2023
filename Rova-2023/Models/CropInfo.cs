@@ -16,10 +16,10 @@ namespace Rova_2023.Models
         public string CropDiseaseName { get; set; }
 
         [Required]
-        public List<string> Symptoms { get; set; } 
+        public List<string> Symptoms { get; set; }
 
         [Required]
-        public  List<string> Solutions { get; set; } 
+        public List<string> Solutions { get; set; }
 
         public string? ModelName { get; set; }
 
