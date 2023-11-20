@@ -30,7 +30,7 @@ namespace Rova_2023.Controllers
 
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
-        [HttpGet("getAllCrops")]
+        [HttpGet("getCropDetails")]
         public async Task<IActionResult> getCropDetails([FromQuery] string modelName)
         {
             //get details of the crop

@@ -22,7 +22,7 @@ namespace Rova_2023.Controllers
 
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
-        [HttpPost("signUp")]        
+        [HttpPost("signUp")]
         public async Task<IActionResult> signUp([FromBody] UserRequestDTO userRequestDto)
         {
             //storing the details entered by the user to the session
@@ -44,7 +44,7 @@ namespace Rova_2023.Controllers
             return BadRequest(Result);
 
         }
-       
+
         [AllowAnonymous]
         [EnableCors("CORSPolicy")]
         [HttpPost("Login")]
