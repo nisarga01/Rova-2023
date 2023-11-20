@@ -3,6 +3,7 @@ using Rova_2023.Models;
 using Rova_2023.Utilities;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
+using Rova_2023.IRepository;
 
 namespace Rova_2023.Repository
 {
@@ -18,8 +19,8 @@ namespace Rova_2023.Repository
         //check the user existance in the database
         public async Task<bool> checkUserExistsOrNotAsync(string Name, string Phone)
         {
-            var IsExist = await rovaDBContext.Users.AnyAsync(u => u.Name == Name && u.Phone == Phone);
-            return IsExist;
+            var isExist = await rovaDBContext.Users.AnyAsync(u => u.Name == Name || u.Phone == Phone);
+            return isExist;
         }
 
         //add the user details to the database
@@ -33,7 +34,6 @@ namespace Rova_2023.Repository
                 return new ServiceResponse<Users>
                 {
                     Success = true,
-                    ResultMessage = "User added to the database",
                     Data = User
                 };
             }
@@ -42,7 +42,6 @@ namespace Rova_2023.Repository
                 return new ServiceResponse<Users>
                 {
                     Success = false,
-                    ErrorMessage = "Failed to add user to the database",
                     ResultMessage = ex.Message
                 };
             }
@@ -54,7 +53,6 @@ namespace Rova_2023.Repository
             return await rovaDBContext.Users
                 .Where(u => u.Phone == PhoneNumber)
                 .FirstOrDefaultAsync();
-
         }
 
     }

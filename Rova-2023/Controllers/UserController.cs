@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Rova_2023.DTO.User_DTO;
-using Rova_2023.Services;
+using Rova_2023.IServices;
+
 
 
 namespace Rova_2023.Controllers
@@ -12,12 +13,9 @@ namespace Rova_2023.Controllers
     public class UserController : ControllerBase
     {
         public readonly IUserServices userServices;
-        public readonly IHttpContextAccessor httpContextAccessor;
-
-        public UserController(IUserServices userServices, IHttpContextAccessor httpContextAccessor)
+        public UserController(IUserServices userServices)
         {
             this.userServices = userServices;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         [AllowAnonymous]
@@ -29,6 +27,10 @@ namespace Rova_2023.Controllers
             var Result = await userServices.addUserDetailsToSessionAsync(userRequestDto);
             if (Result.Success)
                 return Ok(Result);
+            if (!Result.Success && Result.ErrorCode == "UserAlreadyExists")
+                return Conflict(Result);
+            if (!Result.Success && Result.ErrorCode == "ValidationFailed")
+                return UnprocessableEntity(Result);
             return BadRequest(Result);
         }
 
@@ -41,8 +43,9 @@ namespace Rova_2023.Controllers
             var Result = await userServices.verifyOtpAsync(enteredOtp);
             if (Result.Success)
                 return Ok(Result);
+            if (!Result.Success && Result.ErrorCode == "Unauthorized")
+                return Unauthorized(Result);
             return BadRequest(Result);
-
         }
 
         [AllowAnonymous]
@@ -54,6 +57,12 @@ namespace Rova_2023.Controllers
             var Result = await userServices.LoginAsync(phoneNumber);
             if (Result.Success)
                 return Ok(Result);
+            if (!Result.Success && Result.ErrorCode == "Unauthorized")
+                return Unauthorized(Result);
+            if (!Result.Success && Result.ErrorCode == "ValidationFailed")
+                return UnprocessableEntity(Result);
+            if (!Result.Success && Result.ErrorCode == "TooManyRequests")
+                return StatusCode(429, Result);
             return BadRequest(Result);
         }
 
@@ -66,16 +75,11 @@ namespace Rova_2023.Controllers
             var Result = await userServices.verifyLoginOtpAsync(enteredOtp);
             if (Result.Success)
                 return Ok(Result);
+            if (!Result.Success && Result.ErrorCode == "Unauthorized")
+                return Unauthorized(Result);
             return BadRequest(Result);
         }
-
-
-
-
-
     }
-
-
 }
 
 

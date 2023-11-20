@@ -3,7 +3,7 @@ using Rova_2023.DTO.User_DTO;
 using Rova_2023.Models;
 using Rova_2023.Utilities;
 
-namespace Rova_2023.Services
+namespace Rova_2023.IServices
 {
     public interface IUserServices
     {
@@ -12,6 +12,5 @@ namespace Rova_2023.Services
         Task<ServiceResponse<Users>> verifyOtpAsync(string EnteredOtp);
         Task<ServiceResponse<string>> LoginAsync(string phoneNumber);
         Task<ServiceResponse<LoginResponseDTO>> verifyLoginOtpAsync(string EnteredOtp);
-
     }
 }

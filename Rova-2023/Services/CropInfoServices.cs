@@ -1,6 +1,7 @@
 ﻿using Rova_2023.DTO.CropInfo_DTO;
 using Rova_2023.Models;
-using Rova_2023.Repository;
+using Rova_2023.IRepository;
+using Rova_2023.IServices;
 using Rova_2023.Utilities;
 
 namespace Rova_2023.Services
@@ -12,6 +13,7 @@ namespace Rova_2023.Services
         {
             this.cropInfoRepository = cropInfoRepository;
         }
+        //add the crop details
         public async Task<ServiceResponse<CropInfoResponseDTO>> addCropDetailsAsync(CropInfoRequestDTO cropInfoRequestDTO)
         {
             var cropInfo = new CropInfo()
@@ -41,41 +43,44 @@ namespace Rova_2023.Services
             };
             return Response;
         }
-        public async Task<ServiceResponse<List<CropInfoResponseDTO>>> getCropDetailsByModelNameAsync(string modelName)
+
+        public async Task<ServiceResponse<CropInfoResponseDTO>> getCropDetailsByModelNameAsync(string modelName)
         {
-            //fetch the crop details through modelName
+            // Fetch the crop details through modelName
             var Result = await cropInfoRepository.getCropDetailsByModelNameAsync(modelName);
 
-            var getCrops = new List<CropInfoResponseDTO>();
+            CropInfoResponseDTO cropInfoResponseDTO = null;
 
-            if (Result.Success)
+            if (Result.Success && Result.Data != null)
             {
-                Result.Data.ForEach(d =>
+                var data = Result.Data; // Assuming Result.Data is a single CropInfoResponseDTO
+                cropInfoResponseDTO = new CropInfoResponseDTO()
                 {
-                    CropInfoResponseDTO cropInfoResponseDTO = new CropInfoResponseDTO()
-                    {
-                        Id = d.Id,
-                        CropName = d.CropName,
-                        CropDiseaseName = d.CropDiseaseName,
-                        Symptoms = d.Symptoms,
-                        Solutions = d.Solutions,
-                        ModelName = d.ModelName,
-                    };
-
-                    getCrops.Add(cropInfoResponseDTO);
-                });
+                    Id = data.Id,
+                    CropName = data.CropName,
+                    CropDiseaseName = data.CropDiseaseName,
+                    Symptoms = data.Symptoms,
+                    Solutions = data.Solutions,
+                    ModelName = data.ModelName,
+                };
             }
-            var Response = new ServiceResponse<List<CropInfoResponseDTO>>()
+            var response = new ServiceResponse<CropInfoResponseDTO>()
             {
-                Data = Result.Success ? getCrops : null,
+                Data = cropInfoResponseDTO,
                 Success = Result.Success,
                 ResultMessage = Result.ResultMessage,
                 ErrorMessage = Result.ErrorMessage
             };
-            return Response;
+
+            return response;
         }
+
     }
 }
+
+
+
+
 
 
 

@@ -22,7 +22,5 @@ namespace Rova_2023.Models
         public List<string> Solutions { get; set; }
 
         public string? ModelName { get; set; }
-
-
     }
 }

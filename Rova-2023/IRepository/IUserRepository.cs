@@ -1,7 +1,7 @@
 ﻿using Rova_2023.Models;
 using Rova_2023.Utilities;
 
-namespace Rova_2023.Repository
+namespace Rova_2023.IRepository
 {
     public interface IUserRepository
     {
@@ -10,5 +10,3 @@ namespace Rova_2023.Repository
         Task<Users> getUserDetailsByPhoneNumberAsync(string phoneNumber);
     }
 }
-
-

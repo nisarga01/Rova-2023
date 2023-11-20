@@ -2,6 +2,7 @@
 using Rova_2023.Data;
 using Rova_2023.Models;
 using Rova_2023.Utilities;
+using Rova_2023.IRepository;
 
 
 namespace Rova_2023.Repository
@@ -16,6 +17,7 @@ namespace Rova_2023.Repository
 
         public async Task<ServiceResponse<CropInfo>> addCropDetailsAsync(CropInfo cropInfo)
         {
+           
             if (string.IsNullOrWhiteSpace(cropInfo.CropName) || string.IsNullOrWhiteSpace(cropInfo.CropDiseaseName))
             {
                 return new ServiceResponse<CropInfo>()
@@ -37,8 +39,6 @@ namespace Rova_2023.Repository
                     ResultMessage = "Crop details added successfully"
 
                 };
-
-
             }
             catch (Exception ex)
             {
@@ -53,13 +53,13 @@ namespace Rova_2023.Repository
             }
         }
 
-        public async Task<ServiceResponse<List<CropInfo>>> getCropDetailsByModelNameAsync(string modelName)
+        public async Task<ServiceResponse<CropInfo>> getCropDetailsByModelNameAsync(string modelName)
         {
             try
             {
                 if (!rovaDBContext.CropInfo.Any(u => u.ModelName == modelName))
                 {
-                    return new ServiceResponse<List<CropInfo>>()
+                    return new ServiceResponse<CropInfo>()
                     {
                         Data = null,
                         Success = false,
@@ -68,19 +68,18 @@ namespace Rova_2023.Repository
                     };
                 }
 
-                List<CropInfo> cropInfos = await rovaDBContext.CropInfo.Where(i => i.ModelName == modelName).ToListAsync();
+                CropInfo cropInfos = await rovaDBContext.CropInfo.Where(i => i.ModelName == modelName).FirstOrDefaultAsync();
 
-                return new ServiceResponse<List<CropInfo>>()
+                return new ServiceResponse<CropInfo>()
                 {
                     Data = cropInfos,
                     Success = true,
                     ResultMessage = "Crop details found"
                 };
-
             }
             catch (Exception ex)
             {
-                return new ServiceResponse<List<CropInfo>>()
+                return new ServiceResponse<CropInfo>()
                 {
                     Success = false,
                     ErrorMessage = ex.Message,

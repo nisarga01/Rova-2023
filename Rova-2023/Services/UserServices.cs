@@ -2,7 +2,8 @@
 using Rova_2023.DTO.LoginResponseDTO;
 using Rova_2023.DTO.User_DTO;
 using Rova_2023.Models;
-using Rova_2023.Repository;
+using Rova_2023.IRepository;
+using Rova_2023.IServices;
 using Rova_2023.Utilities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -39,16 +40,18 @@ namespace Rova_2023.Services
                 };
                 return errorResponse;
             }
+            //checking if the Name is empty and contains only letters or not
             if (string.IsNullOrEmpty(userRequestDto.Name) || !userRequestDto.Name.All(char.IsLetter))
             {
                 var errorResponse = new ServiceResponse<string>
                 {
                     Success = false,
                     ErrorMessage = "Validation failed",
-                    ResultMessage = "User Name should not be empty and should contain only letters"
+                    ResultMessage = "User Name should not be empty,white space and should contain only letters"
                 };
                 return errorResponse;
             }
+            //checking if Phone Number is empty and contains only digit or not
             if (string.IsNullOrEmpty(userRequestDto.Phone) || !userRequestDto.Phone.All(char.IsDigit) || userRequestDto.Phone.Length != 10)
             {
                 var errorResponse = new ServiceResponse<string>
@@ -70,16 +73,15 @@ namespace Rova_2023.Services
 
                 return new ServiceResponse<string>
                 {
-                    Success = true,
-                    ResultMessage = "OTP sent successfully to the phone, please verify in the next step",
-
+                    Success = sendOtpResult.Success,
+                    ResultMessage = sendOtpResult.ResultMessage,
                 };
 
             }
             return new ServiceResponse<string>
             {
-                Success = false,
-                ErrorMessage = "Failed to send OTP",
+                Success = sendOtpResult.Success,
+                ErrorMessage = sendOtpResult.ResultMessage,
             };
 
         }
@@ -96,9 +98,8 @@ namespace Rova_2023.Services
         {
             try
             {
-                var httpContext = httpContextAccessor.HttpContext;
                 string Otp = generateOtp();
-                httpContext.Session.SetString("OTP", Otp);// storing the otp in session
+                httpContextAccessor.HttpContext.Session.SetString("OTP", Otp);// storing the otp in session
 
                 var httpClient = httpClientFactory.CreateClient();
                 httpClient.BaseAddress = new Uri("https://www.fast2sms.com/dev/bulkV2");
@@ -130,7 +131,6 @@ namespace Rova_2023.Services
                         ResultMessage = "Failed to send OTP",
                     };
                 }
-
             }
             catch (Exception ex)
             {
@@ -175,7 +175,6 @@ namespace Rova_2023.Services
                         ResultMessage = "Please try again later."
                     };
                 }
-
             }
             else
             {
@@ -205,6 +204,7 @@ namespace Rova_2023.Services
                     };
                     return errorResponse;
                 }
+                //storing the details of the user in the session
                 var httpContext = httpContextAccessor.HttpContext;
                 httpContext.Session.SetString("Id", User.Id.ToString());
                 httpContext.Session.SetString("Name", User.Name);

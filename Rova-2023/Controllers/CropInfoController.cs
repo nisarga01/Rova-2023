@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Rova_2023.DTO.CropInfo_DTO;
-using Rova_2023.Services;
+using Rova_2023.IServices;
+
 
 namespace Rova_2023.Controllers
 {
@@ -25,6 +26,8 @@ namespace Rova_2023.Controllers
             var Result = await cropInfoServices.addCropDetailsAsync(cropInfoRequestDTO);
             if (Result.Success)
                 return Ok(Result);
+            if (!Result.Success && Result.ErrorCode == "ValidationFailed")
+                return UnprocessableEntity(Result);
             return BadRequest(Result);
         }
 
@@ -37,6 +40,8 @@ namespace Rova_2023.Controllers
             var Result = await cropInfoServices.getCropDetailsByModelNameAsync(modelName);
             if (Result.Success)
                 return Ok(Result);
+            if (!Result.Success && Result.ErrorCode == "NotFound")
+                return NotFound(Result);
             return BadRequest(Result);
         }
 

@@ -10,9 +10,7 @@ namespace Rova_2023.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
-
         public string? Crops { get; set; }
-
 
     }
 }
