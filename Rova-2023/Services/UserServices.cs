@@ -29,7 +29,7 @@ namespace Rova_2023.Services
         public async Task<ServiceResponse<string>> addUserDetailsToSessionAsync(UserRequestDTO userRequestDto)
         {
             //checking the user entered details in the database
-            var existingUser = await userRepository.checkUserExistOrNotAsync(userRequestDto.Name, userRequestDto.Phone);
+            var existingUser = await userRepository.checkUserExistsOrNotAsync(userRequestDto.Name, userRequestDto.Phone);
             if (existingUser)
             {
                 var errorResponse = new ServiceResponse<string>
@@ -65,8 +65,8 @@ namespace Rova_2023.Services
             if (sendOtpResult.Success)
             {
                 //storing the user Name and phonenumber in the session
-                httpContextAccessor.HttpContext.Session.SetString("UserName", userRequestDto.Name);
-                httpContextAccessor.HttpContext.Session.SetString("UserPhone", userRequestDto.Phone);
+                httpContextAccessor.HttpContext.Session.SetString("Name", userRequestDto.Name);
+                httpContextAccessor.HttpContext.Session.SetString("PhoneNumber", userRequestDto.Phone);
 
                 return new ServiceResponse<string>
                 {
@@ -98,7 +98,7 @@ namespace Rova_2023.Services
             {
                 var httpContext = httpContextAccessor.HttpContext;
                 string Otp = generateOtp();
-                httpContext.Session.SetString("UserOTP", Otp);// storing the otp in session
+                httpContext.Session.SetString("OTP", Otp);// storing the otp in session
 
                 var httpClient = httpClientFactory.CreateClient();
                 httpClient.BaseAddress = new Uri("https://www.fast2sms.com/dev/bulkV2");
@@ -147,14 +147,14 @@ namespace Rova_2023.Services
         public async Task<ServiceResponse<Users>> verifyOtpAsync(string enteredOtp)
         {
             //getting the otp stored in the session
-            string storedOtp = httpContextAccessor.HttpContext.Session.GetString("UserOTP");
+            string storedOtp = httpContextAccessor.HttpContext.Session.GetString("OTP");
 
             if (storedOtp == enteredOtp)
             {
                 var User = new Users
                 {
-                    Name = httpContextAccessor.HttpContext.Session.GetString("UserName"),
-                    Phone = httpContextAccessor.HttpContext.Session.GetString("UserPhone"),
+                    Name = httpContextAccessor.HttpContext.Session.GetString("Name"),
+                    Phone = httpContextAccessor.HttpContext.Session.GetString("PhoneNumber"),
                 };
                 var userResponse = await userRepository.addUserDetailsToDatabaseAsync(User);//adding the user details from session to database
                 if (userResponse.Success)
@@ -193,7 +193,7 @@ namespace Rova_2023.Services
         {
             try
             {
-                //get the user in database through phone number
+                //get the user in database by phone number
                 var User = await userRepository.getUserDetailsByPhoneNumberAsync(phoneNumber);
                 if (User == null)
                 {
@@ -206,9 +206,9 @@ namespace Rova_2023.Services
                     return errorResponse;
                 }
                 var httpContext = httpContextAccessor.HttpContext;
-                httpContext.Session.SetString("UserId", User.Id.ToString());
-                httpContext.Session.SetString("UserName", User.Name);
-                httpContext.Session.SetString("UserPhone", User.Phone);
+                httpContext.Session.SetString("Id", User.Id.ToString());
+                httpContext.Session.SetString("Name", User.Name);
+                httpContext.Session.SetString("PhoneNumber", User.Phone);
 
                 string Otp = generateOtp();
                 var httpClient = httpClientFactory.CreateClient();
@@ -262,9 +262,9 @@ namespace Rova_2023.Services
             try
             {
                 string storedOtp = httpContextAccessor.HttpContext.Session.GetString("UserLoginOTP");
-                string Id = httpContextAccessor.HttpContext.Session.GetString("UserId");
-                string Name = httpContextAccessor.HttpContext.Session.GetString("UserName");
-                string Phone = httpContextAccessor.HttpContext.Session.GetString("UserPhone");
+                string Id = httpContextAccessor.HttpContext.Session.GetString("Id");
+                string Name = httpContextAccessor.HttpContext.Session.GetString("Name");
+                string Phone = httpContextAccessor.HttpContext.Session.GetString("PhoneNumber");
 
                 if (storedOtp == enteredOtp)
                 {

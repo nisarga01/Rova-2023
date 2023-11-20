@@ -5,7 +5,7 @@ namespace Rova_2023.Repository
 {
     public interface IUserRepository
     {
-        Task<bool> checkUserExistOrNotAsync(string Name, string Phone);
+        Task<bool> checkUserExistsOrNotAsync(string Name, string Phone);
         Task<ServiceResponse<Users>> addUserDetailsToDatabaseAsync(Users User);
         Task<Users> getUserDetailsByPhoneNumberAsync(string phoneNumber);
     }

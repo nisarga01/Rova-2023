@@ -16,7 +16,7 @@ namespace Rova_2023.Repository
             this.memoryCache = memoryCache;
         }
         //check the user existance in the database
-        public async Task<bool> checkUserExistOrNotAsync(string Name, string Phone)
+        public async Task<bool> checkUserExistsOrNotAsync(string Name, string Phone)
         {
             var IsExist = await rovaDBContext.Users.AnyAsync(u => u.Name == Name && u.Phone == Phone);
             return IsExist;
